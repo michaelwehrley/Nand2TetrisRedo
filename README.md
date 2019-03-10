@@ -17,7 +17,15 @@ Resources:
 |---------------------|--[ Keyboard ]
 ```
 
-To get started with the *Hardware simulator*: `HardwareSimulator.sh`
+To get started with the *Hardware simulator* (b/c we aren't actually building chips): `HardwareSimulator.sh`
+
+Weekly Projects
+1. Elementary Logic Gates
+1. Arithmetic-Logic Gates
+1. Registers and Memory
+1. Writing Low-Level
+1. Comptuer Architecture
+1. Develop Assembler
 
 ## Course 2
 * https://www.coursera.org/learn/nand2tetris2
