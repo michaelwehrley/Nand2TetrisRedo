@@ -17,7 +17,8 @@ Resources:
 |---------------------|--[ Keyboard ]
 ```
 
-To get started with the *Hardware simulator* (b/c we aren't actually building chips): `HardwareSimulator.sh`
+* To get started with the *Hardware simulator* (b/c we aren't actually building chips): `HardwareSimulator.sh`
+* Load `.hdl` script first, then the `.tst` file.
 
 Weekly Projects
 1. Elementary Logic Gates
@@ -136,6 +137,9 @@ else # (i.e., sel == 1)
 
 *Demultiplexor (DMux)* The inverse of a multiplexor.
 
+Notes:
+
+Fi
 
 #### Project 2:
 
