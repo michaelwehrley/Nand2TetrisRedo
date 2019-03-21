@@ -14,5 +14,23 @@ CHIP Or {
     OUT out;
 
     PARTS:
-    // Put your code here:
+    // Case 1: 0|0|1
+    Not(in=a, out=notAOut);
+    Not(in=b, out=notBOut);
+    And(a=notAOut, b=notBOut, out=andNotOut);
+
+    // Case 2 & 3: 0|1|1, 1|0|1
+    And(a=a, b=true, out=andBTrueOut);
+    And(a=true, b=b, out=andATrueOut);
+    Nand(a=andBTrueOut, b=andATrueOut, out=nandOut); // 1
+
+    // Case 4: 1|1|1
+    And(a=a, b=b, out=andOut);
+
+    // The only way 'all' outputs return 1 is in the case of 0|0
+    // all other cases this returns 0 and the other cases return 1 therefore working with Nand
+    Nand(a=andOut, b=nandOut, out=nandOutTruthyCases);
+
+    // if a=0 and b=0 then Nand(1,1) returns 0;
+    Nand(a=nandOutTruthyCases, b=andNotOut, out=out);
 }
