@@ -13,5 +13,9 @@ CHIP Xor {
     OUT out;
 
     PARTS:
-    // Put your code here:
+    // True when an odd number of 1s
+    // Wow!  Just look at the over lap of 1s in this case!
+    Or(a=a, b=b, out=orOut);
+    Nand(a=a, b=b, out=NandOut);
+    And(a=orOut, b=NandOut, out=out);
 }
