@@ -104,7 +104,7 @@ a == 16 bits ==>|        |
                 | adder  |
 b == 16 bits ==>|        |
                 +--------+
-##### Interesting Gates
+##### Interesting Gates & Programmable Gate
 
 *Multiplexor (Mux)*
 - A multiplexor is a device which takes in multiple signals and outputs a single signal. It works as an electronic switch.
@@ -116,7 +116,7 @@ b == 16 bits ==>|        |
 | 1 | b |
 
 
-Additional Example: AndMuxOr
+Additional Example: AndMuxOr / **Programmable Gate**
 
 
      +----------+
