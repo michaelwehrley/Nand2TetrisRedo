@@ -14,23 +14,35 @@ CHIP Or {
     OUT out;
 
     PARTS:
-    // Case 1: 0|0|1
-    Not(in=a, out=notAOut);
-    Not(in=b, out=notBOut);
-    And(a=notAOut, b=notBOut, out=andNotOut);
+    // FIRST TIME AROUND
+    //
+    // // Case 1: 0|0|0
+    // Not(in=a, out=notAOut);
+    // Not(in=b, out=notBOut);
+    // And(a=notAOut, b=notBOut, out=andNotOut);
+    // 
+    // // Case 2 & 3: 0|1|1, 1|0|1
+    // And(a=a, b=true, out=andBTrueOut);
+    // And(a=true, b=b, out=andATrueOut);
+    // Nand(a=andBTrueOut, b=andATrueOut, out=nandOut); // 1
+    // 
+    // // Case 4: 1|1|1
+    // And(a=a, b=b, out=andOut);
+    // 
+    // // The only way 'all' outputs return 1 is in the case of 0|0
+    // // all other cases this returns 0 and the other cases return 1 therefore working with Nand
+    // Nand(a=andOut, b=nandOut, out=nandOutTruthyCases);
+    // 
+    // // if a=0 and b=0 then Nand(1,1) returns 0;
+    // Nand(a=nandOutTruthyCases, b=andNotOut, out=out);
 
-    // Case 2 & 3: 0|1|1, 1|0|1
-    And(a=a, b=true, out=andBTrueOut);
-    And(a=true, b=b, out=andATrueOut);
-    Nand(a=andBTrueOut, b=andATrueOut, out=nandOut); // 1
 
-    // Case 4: 1|1|1
-    And(a=a, b=b, out=andOut);
+    // SECOND TIME AROUND
+    Not(in=a, out=notA);
+    Not(in=b, out=notB);
+    And(a=notA, b=notB, out=out1); // the only case when it will output `true` is if 0 & 0.
 
-    // The only way 'all' outputs return 1 is in the case of 0|0
-    // all other cases this returns 0 and the other cases return 1 therefore working with Nand
-    Nand(a=andOut, b=nandOut, out=nandOutTruthyCases);
+    And(a=true, b=true, out=out2); // all cases really are `true`
 
-    // if a=0 and b=0 then Nand(1,1) returns 0;
-    Nand(a=nandOutTruthyCases, b=andNotOut, out=out);
+    Nand(a=out1, b=out2, out=out); // when both are 1 & 1 I leverage Nand - all other cases `out1` will be 0.
 }
