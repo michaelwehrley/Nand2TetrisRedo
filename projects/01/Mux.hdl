@@ -14,13 +14,19 @@ CHIP Mux {
     OUT out;
 
     PARTS:
-    // https://www.coursera.org/learn/build-a-computer/lecture/iyL0J/unit-1-7-project-1-overview
-    Nand(a=true, b=sel, out=selAOut); // sel is 0 when selOffOut is 1
-    And(a=a, b=selAOut, out=out1);
+    // // https://www.coursera.org/learn/build-a-computer/lecture/iyL0J/unit-1-7-project-1-overview
+    // Nand(a=true, b=sel, out=selAOut); // sel is 0 when selOffOut is 1
+    // And(a=a, b=selAOut, out=out1);
 
-    And(a=true, b=sel, out=selBOut); // sel is 1 when selOnOut is 1
-    And(a=b, b=selBOut, out=out2);
+    // And(a=true, b=sel, out=selBOut); // sel is 1 when selOnOut is 1
+    // And(a=b, b=selBOut, out=out2);
 
-    // Well if one of these is turned "on", then the output of one of them should be displayed if it a 1
-    Or(a=out1, b=out2, out=out);
+    // // Well if one of these is turned "on", then the output of one of them should be displayed if it a 1
+    // Or(a=out1, b=out2, out=out);
+
+    // Second Time Around
+    Not(in=sel, out=notSel);
+    And(a=notSel, b=a, out=notSelOut);
+    And(a=sel, b=b, out=selOutOut);
+    Or(a=notSelOut, b=selOutOut, out=out);
 }
