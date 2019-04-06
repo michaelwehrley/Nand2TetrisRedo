@@ -14,7 +14,13 @@ CHIP Mux16 {
     OUT out[16];
 
     PARTS:
-    Not(in=sel, out=notSel0); And(a=notSel0, b=a[0], out=notSelOut0); And(a=sel, b=b[0], out=selOutOut0); Or(a=notSelOut0, b=selOutOut0, out=out[0]);
+    Not(in=sel, out=notSel0);
+    And(a=notSel0, b=a[0], out=notSelOut0);
+    And(a=sel, b=b[0], out=selOutOut0);
+    Or(a=notSelOut0, b=selOutOut0, out=out[0]);
+
+    // What I should have done was use the Mux here!
+
     Not(in=sel, out=notSel1); And(a=notSel1, b=a[1], out=notSelOut1); And(a=sel, b=b[1], out=selOutOut1); Or(a=notSelOut1, b=selOutOut1, out=out[1]);
     Not(in=sel, out=notSel2); And(a=notSel2, b=a[2], out=notSelOut2); And(a=sel, b=b[2], out=selOutOut2); Or(a=notSelOut2, b=selOutOut2, out=out[2]);
     Not(in=sel, out=notSel3); And(a=notSel3, b=a[3], out=notSelOut3); And(a=sel, b=b[3], out=selOutOut3); Or(a=notSelOut3, b=selOutOut3, out=out[3]);
