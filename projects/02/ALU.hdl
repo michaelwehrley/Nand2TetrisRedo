@@ -20,6 +20,7 @@
 // if (nx == 1) set x = !x       // bitwise not
 // if (zy == 1) set y = 0        // 16-bit constant
 // if (ny == 1) set y = !y       // bitwise not
+
 // if (f == 1)  set out = x + y  // integer 2's complement addition
 // if (f == 0)  set out = x & y  // bitwise and
 // if (no == 1) set out = !out   // bitwise not
@@ -43,5 +44,18 @@ CHIP ALU {
 
     PARTS:
     // Put you code here:
-    
+    Mux16(a=x, b=false, sel=zx, out=outZX);
+    Not16(in=outZX, out=notOutZX);
+    Mux16(a=outZX, b=notOutZX, sel=nx, out=outX);
+
+    Mux16(a=y, b=false, sel=zy, out=outZY);
+    Not16(in=outZY, out=notOutZY);
+    Mux16(a=outZY, b=notOutZY, sel=ny, out=outY);
+
+    Add16(a=outX, b=outY, out=outAdd);
+    And16(a=outX, b=outY, out=outAnd);
+
+    Mux16(a=outAnd, b=outAdd, sel=f, out=preOut);
+    Not16(in=preOut, out=notPreOut);
+    Mux16(a=preOut, b=notPreOut, sel=no, out=out);
 }
