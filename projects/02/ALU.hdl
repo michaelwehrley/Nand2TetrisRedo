@@ -57,5 +57,45 @@ CHIP ALU {
 
     Mux16(a=outAnd, b=outAdd, sel=f, out=preOut);
     Not16(in=preOut, out=notPreOut);
-    Mux16(a=preOut, b=notPreOut, sel=no, out=out);
+
+    Mux16(a=preOut, b=notPreOut, sel=no, out=out,
+        out[15]=outForNG15,
+        out[14]=outForNG14,
+        out[13]=outForNG13,
+        out[12]=outForNG12,
+        out[11]=outForNG11,
+        out[10]=outForNG10,
+        out[9]=outForNG9,
+        out[8]=outForNG8,
+        out[7]=outForNG7,
+        out[6]=outForNG6,
+        out[5]=outForNG5,
+        out[4]=outForNG4,
+        out[3]=outForNG3,
+        out[2]=outForNG2,
+        out[1]=outForNG1,
+        out[0]=outForNG0);
+    And(a=true, b=outForNG15, out=ng);
+
+    Or(a=outForNG15, b=outForNG14, out=OrzrqOut14);
+    Or(a=OrzrqOut14, b=outForNG13, out=OrzrqOut13);
+    Or(a=OrzrqOut13, b=outForNG12, out=OrzrqOut12);
+    Or(a=OrzrqOut12, b=outForNG11, out=OrzrqOut11);
+    Or(a=OrzrqOut11, b=outForNG10, out=OrzrqOut10);
+    Or(a=OrzrqOut10, b=outForNG9, out=OrzrqOut9);
+    Or(a=OrzrqOut9, b=outForNG8, out=OrzrqOut8);
+    Or(a=OrzrqOut8, b=outForNG7, out=OrzrqOut7);
+    Or(a=OrzrqOut7, b=outForNG6, out=OrzrqOut6);
+    Or(a=OrzrqOut6, b=outForNG5, out=OrzrqOut5);
+    Or(a=OrzrqOut5, b=outForNG4, out=OrzrqOut4);
+    Or(a=OrzrqOut4, b=outForNG3, out=OrzrqOut3);
+    Or(a=OrzrqOut3, b=outForNG2, out=OrzrqOut2);
+    Or(a=OrzrqOut2, b=outForNG1, out=OrzrqOut1);
+    Or(a=OrzrqOut1, b=outForNG0, out=OrzrqOut0);
+
+    Not(in=OrzrqOut0, out=zr);
+
+
+
+
 }

@@ -13,6 +13,7 @@ CHIP And16 {
     OUT out[16];
 
     PARTS:
+    // Really.....And(a=a, b=b, out=out);
     Nand (a=a[0], b=b[0], out=NandOut0); Not (in=NandOut0, out=out[0]);
     Nand (a=a[1], b=b[1], out=NandOut1); Not (in=NandOut1, out=out[1]);
     Nand (a=a[2], b=b[2], out=NandOut2); Not (in=NandOut2, out=out[2]);
