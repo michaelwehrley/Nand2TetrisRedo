@@ -16,19 +16,11 @@ CHIP PC {
     OUT out[16];
 
     PARTS:
-    // reset = isReset
-    Or(a=load, b=reset, out=resetOrLoadA, out=resetOrLoadB);
-    Not(in=resetOrLoadA, out=notResetOrLoad);
-    And(a=notResetOrLoad, b=inc, out=isInc); // isInc
-    Not(in=reset, out=notReset);
-    And(a=notReset, b=load, out=isLoad); // isLoad
+    Or(a=reset, b=load, out=resetOrLoad);
+    Or(a=resetOrLoad, b=inc, out=anything);
 
-    //Mux16(a=in, b=false, sel=reset, out=resetOut);
-    //Register(in=foo, load=resetOrLoadB, out=stateOutA, out=stateOutB);
-    //Inc16(in=stateOutA, out=foo, out=incOut);
-    //Mux16(a=stateOutB, b=incOut, sel=isInc, out=out);
-
-    Mux16(a=in, b=foo, sel=isInc, out=stateOutB);
-    Register(in=stateOutB, load=isInc, out=stateOut);
-    Inc16(in=stateOut, out=foo, out=out);
+    Mux16(a=fromInc, b=in, sel=load, out=toReset);
+    Mux16(a=toReset, b=false, sel=reset, out=toRegister);
+    Register(in=toRegister, load=anything, out=toInc, out=out);
+    Inc16(in=toInc, out=fromInc);
 }
