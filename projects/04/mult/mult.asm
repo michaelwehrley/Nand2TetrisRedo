@@ -8,18 +8,26 @@
 
 // Put your code here.
 
-@R0
-D=M
-@8
-D;JGT
+// .rb
+// GOAL: z = x * y
+// z = 0
+// while y > 0
+//   z = z + x
+//   y = y - 1
+// end
+// z
 
-@R1
-M=0
-@10
-0;JMP
+// pseudocode
+// GOAL:  RAM[2] = RAM[0]* RAM[1]
+// RAM[2] = 0
+// while RAM[1] > 0
+//   RAM[2] + RAM[2] + RAM[0]
+//   RAM[1] = RAM[1] - 1
+// end
 
-@R1
-M=1
-
-@10
+@0
+D=M // D = 0
+@R2
+M=D // RAM[2] is now set to 0
+@4
 0;JMP

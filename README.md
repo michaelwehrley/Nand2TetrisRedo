@@ -152,3 +152,14 @@ We need a way to store memory!  That is why we have RAM (Random Access Memory)
 
 ### Machine Language
 
+|                 Memory             |
+|====================================|
+|         ROM        |      RAM      |
+|--------------------|---------------|
+|     Read-Only      |               |
+|--------------------|---------------|
+| Instruction Memory |  Data Memory  |
+|                    |    (memory)   |
+|--------------------|---------------|
+
+* ROM is read only and reads the instructions that are loaded into it, kind of like a game cartridge.
