@@ -163,3 +163,6 @@ We need a way to store memory!  That is why we have RAM (Random Access Memory)
 |--------------------|---------------|
 
 * ROM is read only and reads the instructions that are loaded into it, kind of like a game cartridge.
+* Labels help with readability
+* Variables also help with readability.  Variables are assigned to memory greater than `n`
+* **Loaders** help with **Relocatable Code**.
