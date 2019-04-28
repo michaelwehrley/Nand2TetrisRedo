@@ -1,6 +1,5 @@
 # Nand2Tetris
 
-## Course 1
 HACK
 * https://www.coursera.org/learn/build-a-computer
 
@@ -29,8 +28,6 @@ Weekly Projects
 1. Develop Assembler
 
 ### Lesson Notes
-
-#### Project 1:
 
 * 8-bit, 16-bit, 32-bit and 64-bit all refer to a processor's **word** size. A **word** in processor parlance means the native size of information it can place into a **register** and process without special instructions. It also refers to the _size of the memory address space_.
 * Several Tesla products move data across a 512-bit memory bus.
@@ -137,11 +134,21 @@ else # (i.e., sel == 1)
 
 *Demultiplexor (DMux)* The inverse of a multiplexor.
 
-Notes:
+### Combinational Chips
 
-Fi
+These chips help build the ALU (Arithmetic Logic Unit)
+* FullAdder is built using 2 HalfAdders :-)
+* One thing to remeber is that the first 6 bits are for finding if it is a negative number! Whoops!
+* Status outputs: `zr` and `ng` - zero and negative
+* The ALU  and Inc16 took me quite some time!
 
-#### Project 2:
+### Sequential Chips
 
-## Course 2
-* https://www.coursera.org/learn/nand2tetris2
+We need a way to store memory!  That is why we have RAM (Random Access Memory)
+* We assume in this course that the DFF gate (Data Flip Flop gate) is a primitive chip.  It can be built using Nand Chips though.
+* We can build a **register** from a DFF and build more registers to create a 16-bit register.
+* With 16-bit registers, we can then create a x-number of registers to create a RAM memory unit built of 16-bit address combination: 65,536 bits ~ 64K. In this unit, we are building a 16K 16-bit RAM unit.
+* The Program Counter (i.e., PC) too me fooooooorrever! :-)
+
+### Machine Language
+
