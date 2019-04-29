@@ -33,23 +33,23 @@ M=D // RAM[2] is now set to 0
 // while loop
 @R1 // RAM[1]
 D=M
-@R3 // RAM[3]
+@counter // Starting @ RAM[16]
 M=D // RAM[2] = D = RAM[1]
 @END // set to GOTO END if...
-D;JLE // if RAM[3] </= 0 then go to END
+D;JLE // if RAM[16] </= 0 then go to END
 @R2 // M = RAM[2] sum/product
 D=M
 @R0
 D=D+M // D = RAM[1]...it was zero
 @R2
 M=D
-@R3 // RAM[3]: the counter
+@counter // RAM[16]: the counter
 M=M-1
-@R3 // unnecessary?
+@counter // unnecessary?
 D=M
 @8 // BEGIN
 D;JGT
 
 (END)
-@22 // @END?
-0;JMP
+  @22 // @END?
+  0;JMP
