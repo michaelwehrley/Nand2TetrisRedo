@@ -26,30 +26,53 @@
 //   RAM[1] = RAM[1] - 1
 // end
 
-@0
-D=A // D = 0
 @R2
-M=D // RAM[2] is now set to 0
-// while loop
+M=0 // RAM[2]; i.e., the sum is now set to 0 
+
+@R0
+D=M
+@R1
+D=D-M
+@SWAP
+D;JLT
+
 @R1 // RAM[1]
 D=M
 @counter // Starting @ RAM[16]
-M=D // RAM[2] = D = RAM[1]
-@END // set to GOTO END if...
-D;JLE // if RAM[16] </= 0 then go to END
-@R2 // M = RAM[2] sum/product
-D=M
-@R0
-D=D+M // D = RAM[1]...it was zero
+M=D // @counter is now set to D; i.e., the number of times we need to ADD!
+
+@END // set to A to instruction/ROM label `END`
+D;JLE // if `@counter` </= 0 then go to `END`
+
+@R2 // M = RAM[2] is the sum
+D=M // grab anything that is in sum so we can add more to it.
+@R0 // grab the first operand
+D=D+M // new_sum = previous_sum + operand
 @R2
-M=D
-@counter // RAM[16]: the counter
+M=D // set sum in RAM[2]
+@counter // RAM[16]: decrement the counter
 M=M-1
-@counter // unnecessary?
+@counter // We need to evaluate D
 D=M
-@8 // BEGIN
+@12 // Set A to `BEGIN`
 D;JGT
 
 (END)
-  @22 // @END?
+  @26 // @END?
+  0;JMP
+
+(SWAP)
+  @R0
+  D=M
+  @temp
+  M=D
+  @R1
+  D=M
+  @R0
+  M=D
+  @temp
+  D=M
+  @R1
+  M=D
+  @8
   0;JMP
