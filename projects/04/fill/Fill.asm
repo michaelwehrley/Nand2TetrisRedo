@@ -13,21 +13,27 @@
 
 // Put your code here.
 
-@SCREEN
-M=-1
-D=A
-@LOOP
-0;JMP
-@R7
-0;JMP
+@KBD
+D=M
+@BLACK_OUT
+D;JGT
+@WHITE_OUT
+D;JMP
+// @RESTART // Maybe unnecessary in future
 
-(LOOP)
-  A=D+1
-  M=-1
-  D=D+1
-  @KBD // 24576
-  D=D-A
-  A=D+A
-  A;JLE
-  @R7
+(BLACK_OUT)
+  @foo
+  @bar
+  @RESTART
+  0;JMP
+
+(WHITE_OUT)
+  @RESTART
+  0;JMP
+
+(RESTART)
+  // For jumping it ignores D and focuses on A
+  // D is used for comparisons and whatever
+  // is in A gets sent to the PC for jumping
+  @0
   0;JMP
