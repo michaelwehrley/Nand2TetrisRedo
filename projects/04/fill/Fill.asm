@@ -13,22 +13,27 @@
 
 // Put your code here.
 
-@KBD
+@KBD // 24576
 D=M
 @BLACK_OUT
-D;JGT
+D;JGT // Jump to @BLACK_OUT `if` a key is being pressed
 @WHITE_OUT
 D;JMP
-// @RESTART // Maybe unnecessary in future
 
 (BLACK_OUT)
-  @foo
-  @bar
-  @RESTART
+  @SCREEN // 16384
+  D=A
+  @index
+  M=D // set i=@SCREEN
+  @BLACK_OUT_CONDITIONAL_LOOP
   0;JMP
 
 (WHITE_OUT)
-  @RESTART
+  @SCREEN // 16384
+  D=A
+  @index
+  M=D // set i=@SCREEN
+  @WHITE_OUT_CONDITIONAL_LOOP
   0;JMP
 
 (RESTART)
@@ -36,4 +41,34 @@ D;JMP
   // D is used for comparisons and whatever
   // is in A gets sent to the PC for jumping
   @0
+  0;JMP
+
+(BLACK_OUT_CONDITIONAL_LOOP)
+  @KBD // restart here (i.e., 24576)
+  // D *was* set to the @SCREEN the 1st time
+  D=A-D // keyboard - i = will always be positive until a jump
+  @RESTART
+  D;JEQ
+  @index
+  A=M // set A to be the value (the current register) in `index` !IMPORTANT!
+  M=-1 // set this (i.e., registory A) to -1 (i.e., BLACK)
+  @index
+  M=M+1 // increment the index register RAM[index]
+  D=M // rest D b/c it isn't set by @SCREEN anymore
+  @BLACK_OUT_CONDITIONAL_LOOP
+  0;JMP
+
+(WHITE_OUT_CONDITIONAL_LOOP)
+  @KBD // restart here (i.e., 24576)
+  // D *was* set to the @SCREEN the 1st time
+  D=A-D // keyboard - i = will always be positive until a jump
+  @RESTART
+  D;JEQ
+  @index
+  A=M // set A to be the value (the current register) in `index` !IMPORTANT!
+  M=0 // set this (i.e., registory A) to 0  (i.e., WHITE)
+  @index
+  M=M+1 // increment the index register RAM[index]
+  D=M // rest D b/c it isn't set by @SCREEN anymore
+  @WHITE_OUT_CONDITIONAL_LOOP
   0;JMP
