@@ -16,7 +16,7 @@ Resources:
 |---------------------|--[ Keyboard ]
 ```
 
-* To get started with the *Hardware simulator* (b/c we aren't actually building chips): `HardwareSimulator.sh`
+* To get started with the *Hardware simulator* (b/c we aren't actually building chips): `$ HardwareSimulator.sh`
 * Load `.hdl` script first, then the `.tst` file.
 
 Weekly Projects
@@ -151,6 +151,8 @@ We need a way to store memory!  That is why we have RAM (Random Access Memory)
 * The Program Counter (i.e., PC) too me fooooooorrever! :-)
 
 ### Machine Language
+
+`$ CPUEmulator.sh`
 
 |                 Memory             |
 |====================================|
