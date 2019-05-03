@@ -1,0 +1,47 @@
+// To mimic the snake game we played when we were younger,
+// but built in Assembly
+
+// BuildLevel # i.e., walls
+@BUILD_BORDER
+0;JMP
+@END
+
+(END)
+  @2
+  0;JMP
+
+(BUILD_BORDER)
+  @INITIALIZE_TOP_BORDER
+  @INITIALIZE_BOTTOM_BORDER
+
+(INITIALIZE_TOP_BORDER)
+  @SCREEN // Furthest top left RAM
+  D=A
+  @CURRENT_POSITION
+  M=D
+  @16415 // Furthest top right RAM
+  D=A
+  @TOP_RIGHT_CORNER
+  M=D
+  @TOP_BORDER_VALUE
+  M=-1
+  @DRAW_TOP_BORDER
+  0;JMP
+
+(DRAW_TOP_BORDER)
+  @CURRENT_POSITION
+  A=M
+  M=-1
+  @TOP_RIGHT_CORNER
+  D=M
+  @CURRENT_POSITION
+  M=M+1
+  D=M-D
+  @DRAW_TOP_BORDER
+  D;JLE
+  @INITIALIZE_BOTTOM_BORDER
+  0;JMP
+
+(INITIALIZE_BOTTOM_BORDER)
+  @END
+  0;JMP
