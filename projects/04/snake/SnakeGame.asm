@@ -11,15 +11,17 @@
   0;JMP
 
 (BUILD_BORDER)
+  // @INITIALZE -1, screen distance
   @DRAW_TOP_BORDER
   @DRAW_BOTTOM_BORDER
+  @DRAW_LEFT_BORDER
 
 (INITIALIZE_TOP_BORDER)
-  @SCREEN // Furthest top left RAM
+  @SCREEN // Top-left RAM
   D=A
   @CURRENT_POSITION
   M=D
-  @16415 // Furthest top right RAM
+  @16415 // Top-right RAM
   D=A
   @TOP_RIGHT_CORNER
   M=D
@@ -46,11 +48,11 @@
   0;JMP
 
 (INITIALIZE_BOTTOM_BORDER)
-  @24544 // Furthest bottom left RAM
+  @24544 // Bottom-left RAM
   D=A
   @CURRENT_POSITION
   M=D
-  @24575 // Furthest bottom right RAM
+  @24575 // Bottom-right RAM
   D=A
   @BOTTOM_RIGHT_CORNER
   M=D
@@ -73,6 +75,41 @@
   D=M-D
   @DRAW_BOTTOM_BORDER
   D;JLE
-  // DRAW LEFT BORDER
+
+(INITIALIZE_LEFT_BORDER)
+  @16416 // Upper-left RAM
+  D=A
+  @CURRENT_POSITION
+  M=D
+  @24512 // Lower-left RAM //32
+  D=A
+  @LOWER_LEFT_CORNER
+  M=D
+  @LEFT_BORDER_VALUE
+  M=1
+  @32
+  D=A
+  @SCREEN_WIDTH
+  M=D
+  @DRAW_LEFT_BORDER
+  D;JMP
+
+(DRAW_LEFT_BORDER)
+  @INITIALIZE_LEFT_BORDER
+  @LEFT_BORDER_VALUE
+  D=M
+  @CURRENT_POSITION
+  A=M
+  M=D
+  @SCREEN_WIDTH
+  D=M
+  @CURRENT_POSITION
+  M=M+D
+  D=M
+  @LOWER_LEFT_CORNER
+  D=D-M
+  @DRAW_LEFT_BORDER
+  D;JLE
+
   @END
   0;JMP
