@@ -12,7 +12,8 @@
 
 (BUILD_BORDER)
   // We could initialize all variables here...
-  @INITIALIZE_TOP_BORDER
+  // @INITIALIZE_TOP_BORDER
+  @INITALIZE_SNAKE
   0;JMP
 
 (INITIALIZE_TOP_BORDER)
@@ -156,20 +157,53 @@
   // @BOTTOM_BORDER_VALUE = 24575
   // (24575 - 16383) / 2 = 4096 (256 rows & 32 memory columns - 512 pixels across)
   // 16383 + 4096 - 16 (not sure why) = 20463 
+
+  // Initialize snake position
   @20463
-  M=1 // Just the head: 0b0000 0000 0000 0001
   D=A
   @SNAKE_POSITION
   M=D
-  @LEFT
+
+  // Initialize snake body/color
+  @SNAKE_BODY
+  A=D
+  M=1 // Just the head: 0b0000 0000 0000 0001
+
+  // Initialize Directions
+  @UP
+  M=0
   @RIGHT
-  @FORWARD
+  M=1
+  @2
+  D=A
+  @DOWN
+  M=D
+  @3
+  D=A
+  @LEFT
+  M=D
+
+  // Set Initial Direction LEFT
+  @LEFT
+  D=M
   @DIRECTION
+  M=D
   @START
 
 (START)
   @MOVE
+  0;JMP
   @END
   0;JMP
 
+(MOVE)
+  // Shit right: 63 => 31 => 15 => 7 => 3 => 1 => 0
+  // if direction is LEFT
+  // Shift LEFT (which here ends up being right?!) by multipling by 2
+  @SNAKE_POSITION
+  A=M
+  D=M
+  M=D+M
+  @MOVE
+  0;JMP
 
