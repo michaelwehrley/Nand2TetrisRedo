@@ -164,10 +164,15 @@
   @SNAKE_POSITION
   M=D
 
-  // Initialize snake body/color
+  // Initialize snake body
   @SNAKE_BODY
-  A=D
-  M=1 // Just the head: 0b0000 0000 0000 0001
+  M=1 // set the head (@SNAKE_BODY) to 0b0000 0000 0000 0001
+  D=M
+
+  // Build Snake
+  @SNAKE_POSITION
+  A=M
+  M=D
 
   // Initialize Directions
   @UP
@@ -183,27 +188,42 @@
   @LEFT
   M=D
 
-  // Set Initial Direction LEFT
-  @LEFT
+  // Set Initial Direction RIGHT
+  @RIGHT
   D=M
   @DIRECTION
   M=D
   @START
 
 (START)
-  @MOVE
+  @MOVE_RIGHT
   0;JMP
   @END
   0;JMP
 
-(MOVE)
-  // Shit right: 63 => 31 => 15 => 7 => 3 => 1 => 0
-  // if direction is LEFT
-  // Shift LEFT (which here ends up being right?!) by multipling by 2
+(MOVE_RIGHT)
+  // Shift RIGHT in binary is created by doubling!
   @SNAKE_POSITION
   A=M
-  D=M
+  D=M // The current 'head/body'
   M=D+M
-  @MOVE
+  D=M
+  @SNAKE_BODY
+  M=D
+
+  @RIGHT_BORDER_VALUE // 0b1000 0000 0000 0000
+  D=M-D
+  @JUMP_RIGHT
+  D;JEQ
+  @MOVE_RIGHT
   0;JMP
 
+(JUMP_RIGHT)
+  @SNAKE_POSITION
+  M=M+1
+  A=M
+  M=1
+  @SNAKE_BODY
+  M=1
+  @MOVE_RIGHT
+  0;JMP
