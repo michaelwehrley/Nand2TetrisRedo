@@ -12,8 +12,8 @@
 
 (BUILD_BORDER)
   // We could initialize all variables here...
-  // @INITIALIZE_TOP_BORDER
-  @INITALIZE_SNAKE
+  @INITIALIZE_TOP_BORDER
+  // @INITALIZE_SNAKE
   0;JMP
 
 (INITIALIZE_TOP_BORDER)
@@ -198,8 +198,6 @@
 (START)
   @MOVE_RIGHT
   0;JMP
-  @END
-  0;JMP
 
 (MOVE_RIGHT)
   // Shift RIGHT in binary is created by doubling!
@@ -210,7 +208,6 @@
   D=M
   @SNAKE_BODY
   M=D
-
   @RIGHT_BORDER_VALUE // 0b1000 0000 0000 0000
   D=M-D
   @JUMP_RIGHT
