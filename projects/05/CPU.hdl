@@ -48,16 +48,17 @@ CHIP CPU {
     ALU(
       x=ALUInTop,
       y=ALUInBottom,
-      zx=false,
-      nx=false,
-      zy=false,
-      ny=false,
-      f=false,
-      no=false,
+      zx=instruction[11],
+      nx=instruction[10],
+      zy=instruction[9],
+      ny=instruction[8],
+      f=instruction[7],
+      no=instruction[6],
       out=ALUOut,
       zr=foo,
       ng=bar
     );
-    Not(in=true, out=writeM);
-    PC(in=ARegisterOut, load=true, inc=true, reset=reset, out=false);
+    Not(in=instruction[12], out=isM);
+    And(a=isM, b=instruction[4], out=writeM); // Is there a better way to get just one bit?
+    PC(in=ARegisterOut, load=instruction[15], inc=true, reset=reset, out=pcOut);
 }
