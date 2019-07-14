@@ -40,25 +40,47 @@ CHIP CPU {
 
     PARTS:
     // Put your code here:
+    Mux16(a=instruction, b=ALUOut, sel=instruction[15], out=ARegisterIn);
 
-    Mux16(a=ALUOut, b=instruction, sel=instruction[15], out=ARegisterIn);
-    ARegister(in=ARegisterIn, load=instruction[15], out=ARegisterOut);
-    DRegister(in=ALUOut, load=false, out=ALUInTop, out=outM);
-    Mux16(a=ARegisterOut, b=inM, sel=false, out=ALUInBottom);
+    // A-instruction (`instruction[15]` must be 0)
+    Not(in=instruction[15], out=isAInstruction);
+    ARegister(in=ARegisterIn, load=isAInstruction, out=ARegisterOut); // isAInstruction?
+
+    // C-instructions (`instruction[15]` must be 1):
+    And(a=instruction[15], b=true, out=isCinstruction);
+    And(a=isCinstruction, b=instruction[11], out=c1);
+    And(a=isCinstruction, b=instruction[10], out=c2);
+    And(a=isCinstruction, b=instruction[9], out=c3);
+    And(a=isCinstruction, b=instruction[8], out=c4);
+    And(a=isCinstruction, b=instruction[7], out=c5);
+    And(a=isCinstruction, b=instruction[6], out=c6);
+    // And(a=instruction[15], b=instruction[5], out=d1DestinationA);
+    Not(in=instruction[5], out=notDestinationA);
+    And(a=notDestinationA, b=instruction[4], out=destinationD);
+    And(a=isCinstruction, b=destinationD, out=d2DestinationD);
+    // And(a=instruction[15], b=instruction[3], out=d3DestinationM);
+
+    Mux16(a=inM, b=ARegisterOut, sel=isCinstruction, out=ALUInBottom);
+    // c1 c2 c3 c4 c5 c5
     ALU(
       x=ALUInTop,
       y=ALUInBottom,
-      zx=instruction[11],
-      nx=instruction[10],
-      zy=instruction[9],
-      ny=instruction[8],
-      f=instruction[7],
-      no=instruction[6],
+      zx=c1,
+      nx=c2,
+      zy=c3,
+      ny=c4,
+      f=c5,
+      no=c6,
       out=ALUOut,
-      zr=foo,
-      ng=bar
+      zr=isZero, // TODO: connect
+      ng=isNegative // TODO: connect
     );
-    Not(in=instruction[12], out=isM);
-    And(a=isM, b=instruction[4], out=writeM); // Is there a better way to get just one bit?
-    PC(in=ARegisterOut, load=instruction[15], inc=true, reset=reset, out=pcOut);
+
+    // Destination instructions
+    // d1
+    // d2
+    DRegister(in=ALUOut, load=d2DestinationD, out=ALUInTop);
+    // d3
+
+    // Jump Instructions:
 }
