@@ -44,7 +44,7 @@ CHIP CPU {
 
     // A-instruction (`instruction[15]` must be 0)
     Not(in=instruction[15], out=isAInstruction);
-    ARegister(in=ARegisterIn, load=isAInstruction, out=ARegisterOut); // isAInstruction?
+    ARegister(in=ARegisterIn, load=isAInstruction, out[0..14]=addressM, out=ARegisterOut);
 
     // C-instructions (`instruction[15]` must be 1):
     And(a=instruction[15], b=true, out=isCinstruction);
@@ -83,4 +83,6 @@ CHIP CPU {
     // d3
 
     // Jump Instructions:
+    PC(in=true, load=reset, inc=true, reset=reset, out[0..14]=pc);
 }
+// a registerOut needs to be addressM
