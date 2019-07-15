@@ -55,9 +55,8 @@ CHIP CPU {
     And(a=isCinstruction, b=instruction[7], out=c5);
     And(a=isCinstruction, b=instruction[6], out=c6);
     // And(a=instruction[15], b=instruction[5], out=d1DestinationA);
-    Not(in=instruction[5], out=notDestinationA);
-    And(a=notDestinationA, b=instruction[4], out=destinationD);
-    And(a=isCinstruction, b=destinationD, out=d2DestinationD);
+    // Not(in=instruction[5], out=notDestinationA);
+    // And(a=notDestinationA, b=instruction[4], out=destinationD);
     // And(a=instruction[15], b=instruction[3], out=d3DestinationM);
 
     Mux16(a=inM, b=ARegisterOut, sel=isCinstruction, out=ALUInBottom);
@@ -72,6 +71,7 @@ CHIP CPU {
       f=c5,
       no=c6,
       out=ALUOut,
+      out=outM,
       zr=isZero, // TODO: connect
       ng=isNegative // TODO: connect
     );
@@ -79,10 +79,13 @@ CHIP CPU {
     // Destination instructions
     // d1
     // d2
+    And(a=isCinstruction, b=instruction[4], out=d2DestinationD);
     DRegister(in=ALUOut, load=d2DestinationD, out=ALUInTop);
     // d3
 
     // Jump Instructions:
     PC(in=true, load=reset, inc=true, reset=reset, out[0..14]=pc);
+
+    // writeM
+    And(a=isCinstruction, b=instruction[3], out=writeM);
 }
-// a registerOut needs to be addressM
