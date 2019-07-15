@@ -40,9 +40,9 @@ CHIP CPU {
 
     PARTS:
     // Put your code here:
-    Mux16(a=instruction, b=ALUOut, sel=instruction[15], out=ARegisterIn);
 
     // A-instruction (`instruction[15]` must be 0)
+    Mux16(a=instruction, b=ALUOut, sel=instruction[15], out=ARegisterIn);
     Not(in=instruction[15], out=isAInstruction);
     ARegister(in=ARegisterIn, load=isAInstruction, out[0..14]=addressM, out=ARegisterOut);
 
@@ -54,12 +54,9 @@ CHIP CPU {
     And(a=isCinstruction, b=instruction[8], out=c4);
     And(a=isCinstruction, b=instruction[7], out=c5);
     And(a=isCinstruction, b=instruction[6], out=c6);
-    // And(a=instruction[15], b=instruction[5], out=d1DestinationA);
-    // Not(in=instruction[5], out=notDestinationA);
-    // And(a=notDestinationA, b=instruction[4], out=destinationD);
-    // And(a=instruction[15], b=instruction[3], out=d3DestinationM);
 
     Mux16(a=inM, b=ARegisterOut, sel=isCinstruction, out=ALUInBottom);
+
     // c1 c2 c3 c4 c5 c5
     ALU(
       x=ALUInTop,
@@ -84,7 +81,11 @@ CHIP CPU {
     // d3
 
     // Jump Instructions:
-    PC(in=true, load=reset, inc=true, reset=reset, out[0..14]=pc);
+    Or(a=instruction[1], b=instruction[2], out=jmp01); // ???
+    // Or(a=jmp01, b=instruction[2], out=isJMP);
+    And(a=isCinstruction, b=jmp01, out=cInstructionToJMP);
+    // Not(in=cInstructionToJMP, out=canInc);
+    PC(in=ARegisterOut, load=cInstructionToJMP, inc=true, reset=reset, out[0..14]=pc);
 
     // writeM
     And(a=isCinstruction, b=instruction[3], out=writeM);
