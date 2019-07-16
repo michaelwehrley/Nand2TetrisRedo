@@ -39,15 +39,17 @@ CHIP CPU {
         pc[15];          // address of next instruction
 
     PARTS:
+    // instruction[5] Destination A
+
     // Put your code here:
     Mux16(a=instruction, b=ALUOut, sel=instruction[15], out=ARegisterIn);
 
-    // A-instruction (`instruction[15]` must be 0)
+    // A-instruction (`instruction[15]` must == 0)
     Not(in=instruction[15], out=isAInstruction);
     ARegister(in=ARegisterIn, load=isAInstruction, out[0..14]=addressM, out=ARegisterOut);
 
-    // C-instructions (`instruction[15]` must be 1): 
-    Mux16(a=inM, b=ARegisterOut, sel=instruction[15], out=ALUInBottom);
+    // Set to A or M
+    Mux16(a=ARegisterOut, b=inM, sel=instruction[12], out=ALUInBottom);
 
     // c1 c2 c3 c4 c5 c5
     ALU(
@@ -61,8 +63,8 @@ CHIP CPU {
       no=instruction[6],
       out=ALUOut,
       out=outM,
-      zr=isZero, // TODO: connect
-      ng=isNegative // TODO: connect
+      zr=isZero,
+      ng=isNegative
     );
 
     // Destination instructions
@@ -74,16 +76,14 @@ CHIP CPU {
     And(a=instruction[15], b=instruction[3], out=writeM);
 
     // Jump Instructions:
-    Or(a=isZero, b=isNegative, out=notPositive);
-    Not(in=notPositive, out=isPositive);
-    And(a=isPositive, b=instruction[2], out=j1);
-    And(a=isZero, b=instruction[1], out=j2);
-    And(a=isNegative, b=instruction[0], out=j3);
-    And(a=instruction[15], b=j1, out=isJ1);
-    And(a=instruction[15], b=j2, out=isJ2);
-    And(a=instruction[15], b=j3, out=isJ3);
-    Or(a=isJ1, b=isJ2, out=isJ1OrJ2);
-    Or(a=isJ3, b=isJ1OrJ2, out=isJMP);
+    And(a=isNegative, b=instruction[2], out=jmpJ1);
+    And(a=isZero, b=instruction[1], out=jmpJ2);
+    Not(in=isZero, out=notZero);
+    Not(in=isNegative, out=notNegative);
+    And(a=notZero, b=notNegative, out=isPositive);
+    And(a=isPositive, b=instruction[0], out=jmpJ3);
+    Or(a=jmpJ1, b=jmpJ2, out=jmpJ1OrJ2);
+    Or(a=jmpJ3, b=jmpJ1OrJ2, out=isJMP);
 
     // PC
     PC(in=ARegisterOut, load=isJMP, inc=true, reset=reset, out[0..14]=pc);
