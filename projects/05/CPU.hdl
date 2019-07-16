@@ -40,33 +40,25 @@ CHIP CPU {
 
     PARTS:
     // Put your code here:
+    Mux16(a=instruction, b=ALUOut, sel=instruction[15], out=ARegisterIn);
 
     // A-instruction (`instruction[15]` must be 0)
-    Mux16(a=instruction, b=ALUOut, sel=instruction[15], out=ARegisterIn);
     Not(in=instruction[15], out=isAInstruction);
     ARegister(in=ARegisterIn, load=isAInstruction, out[0..14]=addressM, out=ARegisterOut);
 
-    // C-instructions (`instruction[15]` must be 1):
-    And(a=instruction[15], b=true, out=isCinstruction);
-    And(a=isCinstruction, b=instruction[11], out=c1);
-    And(a=isCinstruction, b=instruction[10], out=c2);
-    And(a=isCinstruction, b=instruction[9], out=c3);
-    And(a=isCinstruction, b=instruction[8], out=c4);
-    And(a=isCinstruction, b=instruction[7], out=c5);
-    And(a=isCinstruction, b=instruction[6], out=c6);
-
-    Mux16(a=inM, b=ARegisterOut, sel=isCinstruction, out=ALUInBottom);
+    // C-instructions (`instruction[15]` must be 1): 
+    Mux16(a=inM, b=ARegisterOut, sel=instruction[15], out=ALUInBottom);
 
     // c1 c2 c3 c4 c5 c5
     ALU(
       x=ALUInTop,
       y=ALUInBottom,
-      zx=c1,
-      nx=c2,
-      zy=c3,
-      ny=c4,
-      f=c5,
-      no=c6,
+      zx=instruction[11],
+      nx=instruction[10],
+      zy=instruction[9],
+      ny=instruction[8],
+      f=instruction[7],
+      no=instruction[6],
       out=ALUOut,
       out=outM,
       zr=isZero, // TODO: connect
@@ -76,17 +68,23 @@ CHIP CPU {
     // Destination instructions
     // d1
     // d2
-    And(a=isCinstruction, b=instruction[4], out=d2DestinationD);
-    DRegister(in=ALUOut, load=d2DestinationD, out=ALUInTop);
+    DRegister(in=ALUOut, load=instruction[4], out=ALUInTop);
     // d3
+    // writeM: Write to register M (i.e., c-instruction && d3 must be `true`)
+    And(a=instruction[15], b=instruction[3], out=writeM);
 
     // Jump Instructions:
-    Or(a=instruction[1], b=instruction[2], out=jmp01); // ???
-    // Or(a=jmp01, b=instruction[2], out=isJMP);
-    And(a=isCinstruction, b=jmp01, out=cInstructionToJMP);
-    // Not(in=cInstructionToJMP, out=canInc);
-    PC(in=ARegisterOut, load=cInstructionToJMP, inc=true, reset=reset, out[0..14]=pc);
+    Or(a=isZero, b=isNegative, out=notPositive);
+    Not(in=notPositive, out=isPositive);
+    And(a=isPositive, b=instruction[2], out=j1);
+    And(a=isZero, b=instruction[1], out=j2);
+    And(a=isNegative, b=instruction[0], out=j3);
+    And(a=instruction[15], b=j1, out=isJ1);
+    And(a=instruction[15], b=j2, out=isJ2);
+    And(a=instruction[15], b=j3, out=isJ3);
+    Or(a=isJ1, b=isJ2, out=isJ1OrJ2);
+    Or(a=isJ3, b=isJ1OrJ2, out=isJMP);
 
-    // writeM
-    And(a=isCinstruction, b=instruction[3], out=writeM);
+    // PC
+    PC(in=ARegisterOut, load=isJMP, inc=true, reset=reset, out[0..14]=pc);
 }
