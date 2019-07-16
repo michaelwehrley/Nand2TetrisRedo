@@ -84,7 +84,8 @@ CHIP CPU {
     And(a=isPositive, b=instruction[0], out=jmpJ3);
     Or(a=jmpJ1, b=jmpJ2, out=jmpJ1OrJ2);
     Or(a=jmpJ3, b=jmpJ1OrJ2, out=isJMP);
+    And(a=isJMP, b=instruction[15], out=isCAndJMP);
 
     // PC
-    PC(in=ARegisterOut, load=isJMP, inc=true, reset=reset, out[0..14]=pc);
+    PC(in=ARegisterOut, load=isCAndJMP, inc=true, reset=reset, out[0..14]=pc);
 }
