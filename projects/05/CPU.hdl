@@ -39,14 +39,18 @@ CHIP CPU {
         pc[15];          // address of next instruction
 
     PARTS:
-    // instruction[5] Destination A
+    // instruction[5] Destination A=
 
     // Put your code here:
-    Mux16(a=instruction, b=ALUOut, sel=instruction[15], out=ARegisterIn);
+    Not(in=instruction[12], out=ANotM);
+    And(a=ANotM, b=instruction[5], out=saveA);
+    And(a=instruction[15], b=saveA, out=selInstruction);
+    Mux16(a=instruction, b=ALUOut, sel=selInstruction, out=Mux16Out);
 
     // A-instruction (`instruction[15]` must == 0)
     Not(in=instruction[15], out=isAInstruction);
-    ARegister(in=ARegisterIn, load=isAInstruction, out[0..14]=addressM, out=ARegisterOut);
+    Or(a=isAInstruction, b=selInstruction, out=foo);
+    ARegister(in=Mux16Out, load=foo, out[0..14]=addressM, out=ARegisterOut);
 
     // Set to A or M
     Mux16(a=ARegisterOut, b=inM, sel=instruction[12], out=ALUInBottom);
@@ -70,7 +74,8 @@ CHIP CPU {
     // Destination instructions
     // d1
     // d2
-    DRegister(in=ALUOut, load=instruction[4], out=ALUInTop);
+    And(a=instruction[15], b=instruction[4], out=setD);
+    DRegister(in=ALUOut, load=setD, out=ALUInTop);
     // d3
     // writeM: Write to register M (i.e., c-instruction && d3 must be `true`)
     And(a=instruction[15], b=instruction[3], out=writeM);
