@@ -39,21 +39,29 @@ CHIP CPU {
         pc[15];          // address of next instruction
 
     PARTS:
-    // instruction[5] Destination A=
-
     // Put your code here:
-    Not(in=instruction[12], out=ANotM);
-    And(a=ANotM, b=instruction[5], out=saveA);
-    And(a=instruction[15], b=saveA, out=selInstruction);
-    Mux16(a=instruction, b=ALUOut, sel=selInstruction, out=Mux16Out);
 
-    // A-instruction (`instruction[15]` must == 0)
+    // c-instruction
+    Mux16(a=instruction, b=ALUOut, sel=instruction[15], out=Mux16Out);
+
+    // instruction[15] must == 0 for it to be A-instruction - definition of a c-instruction
+    // Is. this more complicated b/c the A-register can hold the ALU output?
     Not(in=instruction[15], out=isAInstruction);
-    Or(a=isAInstruction, b=selInstruction, out=foo);
-    ARegister(in=Mux16Out, load=foo, out[0..14]=addressM, out=ARegisterOut);
+    Or(a=isAInstruction, b=instruction[5], out=setA);
+    ARegister(in=Mux16Out, load=setA, out[0..14]=addressM, out=ARegisterOut);
 
-    // Set to A or M
-    Mux16(a=ARegisterOut, b=inM, sel=instruction[12], out=ALUInBottom);
+    // ALU
+    // Compute a fixed set of functions ont he D, A, and M registers
+    // instruction[12] is the `a` value of the c-instruction
+    Mux16(a=ARegisterOut, b=inM, sel=instruction[12], out=ALUInBottom); // why doesn't check for c matter?
+
+    // M-Register
+    // Write to register M (i.e., c-instruction && d3 must be `true`)
+    And(a=instruction[15], b=instruction[3], out=writeM);
+
+    // D-Register
+    And(a=instruction[15], b=instruction[4], out=setD);
+    DRegister(in=ALUOut, load=setD, out=ALUInTop);
 
     // c1 c2 c3 c4 c5 c5
     ALU(
@@ -71,26 +79,16 @@ CHIP CPU {
       ng=isNegative
     );
 
-    // Destination instructions
-    // d1
-    // d2
-    And(a=instruction[15], b=instruction[4], out=setD);
-    DRegister(in=ALUOut, load=setD, out=ALUInTop);
-    // d3
-    // writeM: Write to register M (i.e., c-instruction && d3 must be `true`)
-    And(a=instruction[15], b=instruction[3], out=writeM);
-
     // Jump Instructions:
-    And(a=isNegative, b=instruction[2], out=jmpJ1);
-    And(a=isZero, b=instruction[1], out=jmpJ2);
-    Not(in=isZero, out=notZero);
-    Not(in=isNegative, out=notNegative);
-    And(a=notZero, b=notNegative, out=isPositive);
-    And(a=isPositive, b=instruction[0], out=jmpJ3);
+    And(a=isNegative, b=instruction[2], out=jmpJ1); // j1
+    And(a=isZero, b=instruction[1], out=jmpJ2); // j2
+    Or(a=isZero, b=isNegative, out=isNotPositive);
+    Not(in=isNotPositive, out=isPositive);
+    And(a=isPositive, b=instruction[0], out=jmpJ3); // j3
     Or(a=jmpJ1, b=jmpJ2, out=jmpJ1OrJ2);
     Or(a=jmpJ3, b=jmpJ1OrJ2, out=isJMP);
-    And(a=isJMP, b=instruction[15], out=isCAndJMP);
+    And(a=isJMP, b=instruction[15], out=isJMPInstruction);
 
     // PC
-    PC(in=ARegisterOut, load=isCAndJMP, inc=true, reset=reset, out[0..14]=pc);
+    PC(in=ARegisterOut, load=isJMPInstruction, inc=true, reset=reset, out[0..14]=pc);
 }
