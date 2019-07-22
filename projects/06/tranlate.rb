@@ -1,6 +1,4 @@
 class Assembler
-  DEFAULT_WORD = "0000000000000000".freeze
-
   attr_reader :file, :hack_file
 
   def initialize(file)
@@ -34,29 +32,64 @@ class Assembler
     # where `address` is the number of the sintruciotn following(xxx)
   end
 
-  def a_instruction?(line)
-    !line.match(/^.*(\@)/).nil?
-  end
-
   def append(content)
     File.write(hack_file, "#{content}\n", mode: "a")
   end
 
   def instruction(line)
-    if a_instruction?(line)
-      decode_to_16_bits(line)
+    if !line.match(/^.*(\@)/).nil?
+      AInstruction.new(line).decode
     else
-
+      CInstruction.new(line).decode
     end
-  end
-
-  def decode_to_16_bits(line)
-    base_2 = line.match(/^.*\@(\d*)/)[1].to_i.to_s(2)
-    DEFAULT_WORD.slice(0, 15 - base_2.length).concat(base_2)
   end
 
   def white_space_or_comment?(line)
     line.match(/^\s*$/) || line.match(/^\s*\/\//)
+  end
+end
+
+class Instruction
+  attr_reader :line
+
+  def initialize(line)
+    @line = line
+  end
+
+  def decode
+    raise "sub class must implement"
+  end
+end
+
+class AInstruction < Instruction
+  DEFAULT_WORD = "0000000000000000".freeze
+
+  def decode
+    DEFAULT_WORD.slice(0, 15 - base_2.length).concat(base_2)
+  end
+
+  private
+
+  def base_2
+    @base_2 ||= line.match(/^.*\@(\d*)/)[1].to_i.to_s(2)
+  end
+end
+
+class CInstruction < Instruction
+  DEFAULT_WORD = "1110000000000000".freeze
+
+  def decode
+  end
+
+  private
+
+  def cs
+  end
+
+  def destination
+  end
+
+  def jump
   end
 end
 
