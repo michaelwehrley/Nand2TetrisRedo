@@ -1,10 +1,25 @@
-# ruby translate Add
-
-include 
 class Assembler
-  def initialize
-    # build symbol table
+  DEFAULT_WORD = "0000000000000000".freeze
+
+  attr_reader :file, :hack_file
+
+  def initialize(file)
+    @file = file
+    @hack_file = File.open(File.join(File.dirname(__FILE__), "#{file}.hack"), "w")
   end
+
+  def translate
+    # ARGV: argument vector
+    # ARGC: argument count
+    File.open(File.join(File.dirname(__FILE__), "#{file}.asm")).each do |line|
+      next if white_space_or_comment?(line)
+      next unless instruction?(line)
+
+      append(to_16_bits(line))
+    end
+  end
+
+  private
 
   def first_pass
     # scan entire program
@@ -22,6 +37,23 @@ class Assembler
     #      * `n++` Nex tline
     #   * If the instruction is a C-instruction, complete the instruciton's translation
     #   * Write the translated instruciton to the output file.
+  end
+
+  def append(content)
+    File.write(hack_file, "#{content}\n", mode: "a")
+  end
+
+  def instruction?(line)
+    !line.match(/^.*(\@)/).nil?
+  end
+
+  def to_16_bits(line)
+    base_2 = line.match(/^.*\@(\d*)/)[1].to_i.to_s(2)
+    DEFAULT_WORD.slice(0, 15 - base_2.length).concat(base_2)
+  end
+
+  def white_space_or_comment?(line)
+    line.match(/^\s*$/) || line.match(/^\s*\/\//)
   end
 end
 
@@ -67,10 +99,5 @@ SYMBOL_TABLE = {
 #   A-Instruction.translate()
 # end
 
-# ARGV: argument vector
-# ARGC: argument count
-File.open(File.join(File.dirname(__FILE__), ARGV.first)).each do |line|
-  next if line.match(/^\s*$/) || line.match(/^\s*\/\//)
-
-  puts line
-end
+assembler = Assembler.new(ARGV.first)
+assembler.translate
