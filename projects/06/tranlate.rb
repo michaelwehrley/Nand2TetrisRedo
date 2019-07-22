@@ -9,25 +9,7 @@ class Assembler
   end
 
   def translate
-    # ARGV: argument vector
-    # ARGC: argument count
-    File.open(File.join(File.dirname(__FILE__), "#{file}.asm")).each do |line|
-      next if white_space_or_comment?(line)
-      next unless instruction?(line)
-
-      append(to_16_bits(line))
-    end
-  end
-
-  private
-
-  def first_pass
-    # scan entire program
-    # Add the pair (xxx, address) to the symbol table,
-    # where `address` is the number of the sintruciotn following(xxx)
-  end
-
-  def second_pass
+    set_symbols
     # Set n to 16
     # Scan the entire program again; for each instruction
     #    * If the instruction is `@symbol`, look up the symbol in the symbol table
@@ -37,17 +19,38 @@ class Assembler
     #      * `n++` Nex tline
     #   * If the instruction is a C-instruction, complete the instruciton's translation
     #   * Write the translated instruciton to the output file.
+    File.open(File.join(File.dirname(__FILE__), "#{file}.asm")).each do |line|
+      next if white_space_or_comment?(line)
+
+      append(instruction(line))
+    end
+  end
+
+  private
+
+  def set_symbols
+    # scan entire program
+    # Add the pair (xxx, address) to the symbol table,
+    # where `address` is the number of the sintruciotn following(xxx)
+  end
+
+  def a_instruction?(line)
+    !line.match(/^.*(\@)/).nil?
   end
 
   def append(content)
     File.write(hack_file, "#{content}\n", mode: "a")
   end
 
-  def instruction?(line)
-    !line.match(/^.*(\@)/).nil?
+  def instruction(line)
+    if a_instruction?(line)
+      decode_to_16_bits(line)
+    else
+
+    end
   end
 
-  def to_16_bits(line)
+  def decode_to_16_bits(line)
     base_2 = line.match(/^.*\@(\d*)/)[1].to_i.to_s(2)
     DEFAULT_WORD.slice(0, 15 - base_2.length).concat(base_2)
   end
@@ -99,5 +102,7 @@ SYMBOL_TABLE = {
 #   A-Instruction.translate()
 # end
 
+# ARGV: argument vector
+# ARGC: argument count
 assembler = Assembler.new(ARGV.first)
 assembler.translate
