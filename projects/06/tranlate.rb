@@ -55,38 +55,46 @@ class Instruction
   def initialize(line)
     @line = line
   end
-
-  def decode
-    raise "sub class must implement"
-  end
 end
 
 class AInstruction < Instruction
-  DEFAULT_WORD = "0000000000000000".freeze
-
   def decode
-    DEFAULT_WORD.slice(0, 15 - base_2.length).concat(base_2)
+    "0000000000000000".slice(0, 15 - value.length).concat(value)
   end
 
   private
 
-  def base_2
-    @base_2 ||= line.match(/^.*\@(\d*)/)[1].to_i.to_s(2)
+  def value
+    @value ||= line.match(/^.*\@(\d*)/)[1].to_i.to_s(2)
   end
 end
 
 class CInstruction < Instruction
-  DEFAULT_WORD = "1110000000000000".freeze
-
   def decode
+    "111#{comp}#{dest}#{jump}"
   end
 
   private
 
+  def comp_a
+    a? ? 0 : 1
+  end
+
+  def comp_cs
+  end
+
+  def comp
+    "#{comp_a}#{comp_cs}"
+  end
+
+  def a?
+    line.match(/=.*(M)/).nil?
+  end
+
   def cs
   end
 
-  def destination
+  def dest
   end
 
   def jump
@@ -118,6 +126,10 @@ SYMBOL_TABLE = {
   THIS: 3,
   THAT: 4
 }
+
+# COMP_TABLE = {
+#   10
+# }
 
 # 1. Ignore white space and comments
 # 1. Instructions
