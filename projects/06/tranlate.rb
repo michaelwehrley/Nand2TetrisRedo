@@ -1,4 +1,5 @@
 require "byebug"
+
 class Assembler
   attr_reader :file, :hack_file
 
@@ -9,15 +10,6 @@ class Assembler
 
   def translate
     set_symbols
-    # Set n to 16
-    # Scan the entire program again; for each instruction
-    #    * If the instruction is `@symbol`, look up the symbol in the symbol table
-    #    * If not found
-    #      * Add (symbole, `n`) to the symbol table
-    #      * Use `n` to complete the instructions's translation
-    #      * `n++` Nex tline
-    #   * If the instruction is a C-instruction, complete the instruciton's translation
-    #   * Write the translated instruciton to the output file.
     File.open(File.join(File.dirname(__FILE__), "#{file}.asm")).each do |line|
       next if white_space_or_comment?(line)
 
@@ -28,9 +20,6 @@ class Assembler
   private
 
   def set_symbols
-    # scan entire program
-    # Add the pair (xxx, address) to the symbol table,
-    # where `address` is the number of the sintruciotn following(xxx)
   end
 
   def append(content)
@@ -60,7 +49,7 @@ end
 
 class AInstruction < Instruction
   def decode
-    "0000000000000000".slice(0, 15 - value.length).concat(value)
+    "0000000000000000".slice(0, 16 - value.length).concat(value)
   end
 
   private
@@ -71,43 +60,97 @@ class AInstruction < Instruction
 end
 
 class CInstruction < Instruction
+  COMP_TABLE = {
+    "0": "101010",
+    "1": "111111",
+    "-1": "111010",
+    "D": "001100",
+    "A": "110000",
+    "M": "110000",
+    "!D": "001101",
+    "!A": "110001",
+    "!M": "110001",
+    "-D": "001111",
+    "-A": "110011",
+    "-M": "110011",
+    "D+1": "011111",
+    "A+1": "110111",
+    "M+1": "110111",
+    "D-1": "001110",
+    "A-1": "110010",
+    "M-1": "110010",
+    "D+A": "000010",
+    "D+M": "000010",
+    "D-A": "010011",
+    "D-M": "010011",
+    "A-D": "000111",
+    "M-D": "000111",
+    "D&A": "000000",
+    "D&M": "000000",
+    "D|A": "010101",
+    "D|M": "010101"
+  }.freeze
+
+  JUMP_TABLE = {
+    "JGT": "001",
+    "JEQ": "010",
+    "JGE": "011",
+    "JLT": "100",
+    "JNE": "101",
+    "JLE": "110",
+    "JMP": "111"
+  }.freeze
+
   def decode
-    "111#{comp}#{dest}#{jump}"
+    "111#{comp}#{destination}#{jump}"
   end
 
   private
 
-  def comp_a
-    a? ? 0 : 1
-  end
-
-  def comp_cs
-    return unless cs?
-
-    COMP_TABLE[line.match(/=(.*)/)[1].strip!.to_sym]
-  end
-
   def comp
     "#{comp_a}#{comp_cs}"
+  end
+
+  def comp_a
+    a? ? 0 : 1
   end
 
   def a?
     line.match(/=.*(M)/).nil?
   end
 
+  def comp_cs
+    return "000000" unless cs?
+
+    COMP_TABLE[line.match(/=(.*)/)[1].strip!.to_sym]
+  end
+
   def cs?
-    !line.match(/=(.*)/).nil? # TODO for comments..
+    !line.match(/=(.*)/).nil? # TODO consider comments..
   end
 
-  def dest
-    return "000" unless dest?
-    "#{destination_a}#{destination_d}#{destination_m}"
+  def destination
+    return "000" unless destination?
+
+    "#{dest_field("A")}#{dest_field("D")}#{dest_field("M")}"
   end
 
-  def dest?
+  def destination?
+    !line.match(/([ADM]*)=/).nil?
+  end
+
+  def dest_field(letter)
+    line.match(/([ADM]*)=/)[1].include?(letter) ? "1" : "0"
   end
 
   def jump
+    return "000" unless jump?
+
+    JUMP_TABLE[line.match(/;(.*)/)[1].strip!.to_sym]
+  end
+
+  def jump?
+    !line.match(/;(.*)/).nil? # TODO consider comments..
   end
 end
 
@@ -136,53 +179,6 @@ SYMBOL_TABLE = {
   THIS: 3,
   THAT: 4
 }
-
-COMP_TABLE = {
-  "0": "101010",
-  "1": "111111",
-  "-1": "111010",
-  "D": "001100",
-  "A": "110000",
-  "M": "110000",
-  "!D": "001101",
-  "!A": "110001",
-  "!M": "110001",
-  "-D": "001111",
-  "-A": "110011",
-  "-M": "110011",
-  "D+1": "011111",
-  "A+1": "110111",
-  "M+1": "110111",
-  "D-1": "001110",
-  "A-1": "110010",
-  "M-1": "110010",
-  "D+A": "000010",
-  "D+M": "000010",
-  "D-A": "010011",
-  "D-M": "010011",
-  "A-D": "000111",
-  "M-D": "000111",
-  "D&A": "000000",
-  "D&M": "000000",
-  "D|A": "010101",
-  "D|M": "010101"
-}.freeze
-
-# 1. Ignore white space and comments
-# 1. Instructions
-#   1. A-Instruction: @valueInBinary == 0 000001010101...
-#       ex: @value == @20
-#   1. C-Instruction: dest = comp;jump
-#       ex: 111ac1c2c3c4c5c6d1d2d3j1j2j3
-# 1. Symbols - later
-#   1. Pre-defined...
-
-
-# if 1
-#   CInstruction.translate()
-# else
-#   A-Instruction.translate()
-# end
 
 # ARGV: argument vector
 # ARGC: argument count
