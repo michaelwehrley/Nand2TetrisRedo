@@ -168,3 +168,7 @@ We need a way to store memory!  That is why we have RAM (Random Access Memory)
 * Labels help with readability
 * Variables also help with readability.  Variables are assigned to memory greater than `n`
 * **Loaders** help with **Relocatable Code**.
+
+### Assmebly
+
+Writing assembler: `$ ruby projects/06/translate.rb max/MaxL`
