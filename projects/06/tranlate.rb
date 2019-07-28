@@ -11,6 +11,7 @@ class Assembler
   def translate
     set_symbols
     File.open(File.join(File.dirname(__FILE__), "#{file}.asm")).each do |line|
+      line = line.gsub(" ", "").strip
       next if white_space_or_comment?(line)
 
       append(instruction(line))
@@ -27,7 +28,7 @@ class Assembler
   end
 
   def instruction(line)
-    if !line.match(/^.*(\@)/).nil?
+    if !line.match(/^(\@)/).nil?
       AInstruction.new(line).decode
     else
       CInstruction.new(line).decode
@@ -35,7 +36,7 @@ class Assembler
   end
 
   def white_space_or_comment?(line)
-    line.match(/^\s*$/) || line.match(/^\s*\/\//)
+    line.match(/^\/\//) || line.length == 0
   end
 end
 
@@ -55,43 +56,43 @@ class AInstruction < Instruction
   private
 
   def value
-    @value ||= line.match(/^.*\@(\d*)/)[1].to_i.to_s(2)
+    @value ||= line.match(/^\@(\d*)/)[1].to_i.to_s(2)
   end
 end
 
 class CInstruction < Instruction
-  COMP_TABLE = {
+  COMPUTATIONS = {
     "0": "101010",
     "1": "111111",
     "-1": "111010",
     "D": "001100",
     "A": "110000",
-    "M": "110000",
     "!D": "001101",
     "!A": "110001",
-    "!M": "110001",
     "-D": "001111",
     "-A": "110011",
-    "-M": "110011",
     "D+1": "011111",
     "A+1": "110111",
-    "M+1": "110111",
     "D-1": "001110",
     "A-1": "110010",
-    "M-1": "110010",
     "D+A": "000010",
-    "D+M": "000010",
     "D-A": "010011",
-    "D-M": "010011",
     "A-D": "000111",
-    "M-D": "000111",
     "D&A": "000000",
-    "D&M": "000000",
     "D|A": "010101",
-    "D|M": "010101"
   }.freeze
 
-  JUMP_TABLE = {
+  DESTINATIONS = {
+    "M": "001",
+    "D": "010",
+    "MD": "011",
+    "A": "100",
+    "AM": "101",
+    "AD": "110",
+    "AMD": "111"
+  }.freeze
+
+  JUMPS = {
     "JGT": "001",
     "JEQ": "010",
     "JGE": "011",
@@ -102,55 +103,34 @@ class CInstruction < Instruction
   }.freeze
 
   def decode
-    "111#{comp}#{destination}#{jump}"
+    "111#{memory_location}#{comp}#{destination}#{jump}"
   end
 
   private
 
+  def memory_location
+    line.match(/=.*(M)/).nil? ? 0 : 1
+  end
+
+  # right of `=` or left of `;`
   def comp
-    "#{comp_a}#{comp_cs}"
+    comp = line.match(/=(.*)/) || line.match(/(.*);/)
+
+    COMPUTATIONS[comp[1].gsub("M", "A").to_sym]
   end
 
-  def comp_a
-    a? ? 0 : 1
-  end
-
-  def a?
-    line.match(/=.*(M)/).nil?
-  end
-
-  def comp_cs
-    return "000000" unless cs?
-
-    COMP_TABLE[line.match(/=(.*)/)[1].strip!.to_sym]
-  end
-
-  def cs?
-    !line.match(/=(.*)/).nil? # TODO consider comments..
-  end
-
+  # left of `=` => destination STORING
   def destination
-    return "000" unless destination?
+    return "000" unless dest = line.match(/(.*)=/)
 
-    "#{dest_field("A")}#{dest_field("D")}#{dest_field("M")}"
+    DESTINATIONS[dest[1].to_sym] || "000"
   end
 
-  def destination?
-    !line.match(/([ADM]*)=/).nil?
-  end
-
-  def dest_field(letter)
-    line.match(/([ADM]*)=/)[1].include?(letter) ? "1" : "0"
-  end
-
+  # right of `;` => jump (NOT STORING)
   def jump
-    return "000" unless jump?
+    return "000" unless jump = line.match(/;(.*)/)
 
-    JUMP_TABLE[line.match(/;(.*)/)[1].strip!.to_sym]
-  end
-
-  def jump?
-    !line.match(/;(.*)/).nil? # TODO consider comments..
+    JUMPS[jump[1].to_sym]
   end
 end
 
