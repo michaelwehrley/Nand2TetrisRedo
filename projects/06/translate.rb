@@ -1,18 +1,47 @@
 require "byebug"
 
 class Assembler
-  attr_reader :file, :hack_file
+  attr_reader :file, :hack_file, :line_count
+
+  def symbols
+    @symbols ||= {
+      "R0": "@0",
+      "R1": "@1",
+      "R2": "@2",
+      "R3": "@3",
+      "R4": "@4",
+      "R5": "@5",
+      "R6": "@6",
+      "R7": "@7",
+      "R8": "@8",
+      "R9": "@9",
+      "R10": "@10",
+      "R11": "@11",
+      "R12": "@12",
+      "R13": "@13",
+      "R14": "@14",
+      "R15": "@15",
+      "SCREEN": "@16384",
+      "KBD": "@24576",
+      "SP": "@0",
+      "LCL": "@1",
+      "ARG": "@2",
+      "THIS": "@3",
+      "THAT": "@4"
+    }
+  end
 
   def initialize(file)
     @file = file
     @hack_file = File.open(File.join(File.dirname(__FILE__), "#{file}.hack"), "w")
+    @line_count = 0
   end
 
   def translate
     set_symbols
     File.open(File.join(File.dirname(__FILE__), "#{file}.asm")).each do |line|
-      line = line.gsub(" ", "").strip
-      next if white_space_or_comment?(line)
+      line = line.gsub(/\/{2}.*/, "").gsub(" ", "").strip
+      next if white_space_or_comment?(line) || line.match(/\((.*)\)/)
 
       append(instruction(line))
     end
@@ -21,6 +50,15 @@ class Assembler
   private
 
   def set_symbols
+    File.open(File.join(File.dirname(__FILE__), "#{file}.asm")).each do |line|
+      line = line.gsub(/\/{2}.*/, "").gsub(" ", "").strip
+      next if white_space_or_comment?(line)
+      if symbol = line.match(/\((.*)\)/)
+        symbols[symbol[1].to_sym] = @line_count.to_s
+      else
+        @line_count+=1
+      end
+    end
   end
 
   def append(content)
@@ -28,11 +66,17 @@ class Assembler
   end
 
   def instruction(line)
-    if !line.match(/^(\@)/).nil?
+    if !line.match(/^(\@)(.*)/).nil?
+      line = convert_symbol(line)
+
       AInstruction.new(line).decode
     else
       CInstruction.new(line).decode
     end
+  end
+
+  def convert_symbol(line)
+    symbols[line.match(/^(\@)(.*)/)[2].to_sym] || line
   end
 
   def white_space_or_comment?(line)
@@ -117,6 +161,8 @@ class CInstruction < Instruction
     comp = line.match(/=(.*)/) || line.match(/(.*);/)
 
     COMPUTATIONS[comp[1].gsub("M", "A").to_sym]
+  rescue => e
+    byebug
   end
 
   # left of `=` => destination STORING
@@ -133,32 +179,6 @@ class CInstruction < Instruction
     JUMPS[jump[1].to_sym]
   end
 end
-
-SYMBOL_TABLE = {
-  R0: 0,
-  R1: 1,
-  R2: 2,
-  R3: 3,
-  R4: 4,
-  R5: 5,
-  R6: 6,
-  R7: 7,
-  R8: 8,
-  R9: 9,
-  R10: 10,
-  R11: 11,
-  R12: 12,
-  R13: 13,
-  R14: 14,
-  R15: 15,
-  SCREEN: 16_384,
-  KBD: 24_576,
-  SP: 0,
-  LCL: 1,
-  ARG: 2,
-  THIS: 3,
-  THAT: 4
-}
 
 # ARGV: argument vector
 # ARGC: argument count
