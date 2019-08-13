@@ -41,7 +41,7 @@ class Assembler
     set_symbols
     File.open(File.join(File.dirname(__FILE__), "#{file}.asm")).each do |line|
       line = line.gsub(/\/{2}.*/, "").gsub(" ", "").strip
-      next if white_space_or_comment?(line) || label
+      next if white_space_or_comment?(line) || label(line)
 
       append(instruction(line))
     end
@@ -53,15 +53,16 @@ class Assembler
     File.open(File.join(File.dirname(__FILE__), "#{file}.asm")).each do |line|
       line = line.gsub(/\/{2}.*/, "").gsub(" ", "").strip
       next if white_space_or_comment?(line)
-      if label
-        symbols[label[1].to_sym] = @line_count.to_s
+
+      if label(line)
+        symbols[label(line)[1].to_sym] = @line_count.to_s
       else
         @line_count+=1
       end
     end
   end
 
-  def label
+  def label(line)
     line.match(/\((.*)\)/)
   end
 
