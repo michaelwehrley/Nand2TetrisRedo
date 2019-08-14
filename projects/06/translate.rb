@@ -31,6 +31,10 @@ class Assembler
     }
   end
 
+  def labels
+    @labels ||= {}
+  end
+
   def initialize(file)
     @file = file
     @hack_file = File.open(File.join(File.dirname(__FILE__), "#{file}.hack"), "w")
@@ -38,7 +42,7 @@ class Assembler
   end
 
   def translate
-    set_symbols
+    set_labels
     File.open(File.join(File.dirname(__FILE__), "#{file}.asm")).each do |line|
       line = line.gsub(/\/{2}.*/, "").gsub(" ", "").strip
       next if white_space_or_comment?(line) || label(line)
@@ -49,13 +53,13 @@ class Assembler
 
   private
 
-  def set_symbols
+  def set_labels
     File.open(File.join(File.dirname(__FILE__), "#{file}.asm")).each do |line|
       line = line.gsub(/\/{2}.*/, "").gsub(" ", "").strip
       next if white_space_or_comment?(line)
 
       if label(line)
-        symbols[label(line)[1].to_sym] = @line_count.to_s
+        labels[label(line)[1].to_sym] = @line_count.to_s
       else
         @line_count+=1
       end
@@ -72,7 +76,7 @@ class Assembler
 
   def instruction(line)
     if !line.match(/^(\@)(.*)/).nil?
-      line = convert_symbol(line)
+      line = substitute(line)
 
       AInstruction.new(line).decode
     else
@@ -80,8 +84,10 @@ class Assembler
     end
   end
 
-  def convert_symbol(line)
-    symbols[line.match(/^(\@)(.*)/)[2].to_sym] || line
+  def substitute(line)
+    symbols[line.match(/^(\@)(.*)/)[2].to_sym] ||
+    labels[line.match(/^(\@)(.*)/)[2].to_sym] ||
+    line
   end
 
   def white_space_or_comment?(line)
