@@ -1,7 +1,7 @@
 require "byebug"
 
 class Assembler
-  attr_reader :file, :hack_file, :line_count
+  attr_reader :file, :hack_file
 
   def symbols
     @symbols ||= {
@@ -39,6 +39,8 @@ class Assembler
     @file = file
     @hack_file = File.open(File.join(File.dirname(__FILE__), "#{file}.hack"), "w")
     @line_count = 0
+    @ram_count = 16
+    @characters ||= [*"a".."z"] + [*"A".."Z"]
   end
 
   def translate
@@ -61,7 +63,7 @@ class Assembler
       if label(line)
         labels[label(line)[1].to_sym] = @line_count.to_s
       else
-        @line_count+=1
+        @line_count += 1
       end
     end
   end
@@ -77,17 +79,27 @@ class Assembler
   def instruction(line)
     if !line.match(/^(\@)(.*)/).nil?
       line = substitute(line)
-
       AInstruction.new(line).decode
     else
       CInstruction.new(line).decode
     end
   end
 
-  def substitute(line)
+  def label_or_symbol?(line)
     symbols[line.match(/^(\@)(.*)/)[2].to_sym] ||
-    labels[line.match(/^(\@)(.*)/)[2].to_sym] ||
-    line
+      labels[line.match(/^(\@)(.*)/)[2].to_sym]
+  end
+
+  def substitute(line)
+    if label_or_symbol?(line)
+      "@#{label_or_symbol?(line)}"
+    elsif @characters.include?(line.match(/^(\@)(.*)/)[2][0])
+      symbols[line.match(/^(\@)(.*)/)[2].to_sym] = @ram_count.to_s
+      @ram_count += 1
+      "@#{symbols[line.match(/^(\@)(.*)/)[2].to_sym]}"
+    else
+      line
+    end
   end
 
   def white_space_or_comment?(line)
@@ -172,8 +184,6 @@ class CInstruction < Instruction
     comp = line.match(/=(.*)/) || line.match(/(.*);/)
 
     COMPUTATIONS[comp[1].gsub("M", "A").to_sym]
-  rescue => e
-    byebug
   end
 
   # left of `=` => destination STORING
