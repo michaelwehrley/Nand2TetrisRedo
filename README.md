@@ -169,6 +169,14 @@ We need a way to store memory!  That is why we have RAM (Random Access Memory)
 * Variables also help with readability.  Variables are assigned to memory greater than `n`
 * **Loaders** help with **Relocatable Code**.
 
-### Assmebly
+### Assemebly
 
 Writing assembler: `$ ruby projects/06/translate.rb max/MaxL`
+
+### Stack Arithmetic
+
+Chpater 7 - Part 1: Virtual Machine Translate `$ VMEmulator.sh`
+1. To get a feel of the project: start VM Emulator => open VM Emulator with test script  `BasicTestVME.tst` to see how it works
+2. The point of project 7: writing VM translator `$ ruby VMTranslator BasicTest.vm`
+3. `$ ruby VMTranslator BasicTest.vm` => `BasicTest.asm`
+4. Test `BasicTest.asm` assembly code by starting CPU emulator `$ CPUEmulator.sh` and load script `BasicTest.tst` in to test!
