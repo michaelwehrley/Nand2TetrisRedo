@@ -5,17 +5,16 @@ D=A
 @SP
 A=M
 M=D
-// increment stack pointer
 @SP
 M=M+1
 
 // pop local 0 ...to the stack
 @LCL
 D=M
-// decrement stack pointer
+@0
+D=D+A
 @SP
 M=M-1
-// pop @LCL's 0th local variable
 @SP
 A=M
 M=D
