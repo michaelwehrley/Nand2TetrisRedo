@@ -53,6 +53,7 @@ class VMTranslate
     decrement_stack_pointer
     append("A=M")
     append("M=M#{operation}D")
+    increment_stack_pointer
   end
 
   def pop(register, target, is_temp)
@@ -76,6 +77,7 @@ class VMTranslate
     append("@stackValue")
     append("D=M")
     append("@targetLocation")
+    append("A=M")
     append("M=D")
   end
 

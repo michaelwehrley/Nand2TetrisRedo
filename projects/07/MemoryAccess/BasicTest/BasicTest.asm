@@ -23,6 +23,7 @@ M=D
 @stackValue
 D=M
 @targetLocation
+A=M
 M=D
 // push constant 21
 @21
@@ -57,6 +58,7 @@ M=D
 @stackValue
 D=M
 @targetLocation
+A=M
 M=D
 // pop argument 1
 @SP
@@ -75,6 +77,7 @@ M=D
 @stackValue
 D=M
 @targetLocation
+A=M
 M=D
 // push constant 36
 @36
@@ -101,6 +104,7 @@ M=D
 @stackValue
 D=M
 @targetLocation
+A=M
 M=D
 // push constant 42
 @42
@@ -135,6 +139,7 @@ M=D
 @stackValue
 D=M
 @targetLocation
+A=M
 M=D
 // pop that 2
 @SP
@@ -153,6 +158,7 @@ M=D
 @stackValue
 D=M
 @targetLocation
+A=M
 M=D
 // push constant 510
 @510
@@ -179,6 +185,7 @@ M=D
 @stackValue
 D=M
 @targetLocation
+A=M
 M=D
 // push local 0
 @LCL
@@ -211,6 +218,8 @@ D=M
 M=M-1
 A=M
 M=M+D
+@SP
+M=M+1
 // push argument 1
 @ARG
 D=M
@@ -231,6 +240,8 @@ D=M
 M=M-1
 A=M
 M=M-D
+@SP
+M=M+1
 // push this 6
 @THIS
 D=M
@@ -262,6 +273,8 @@ D=M
 M=M-1
 A=M
 M=M+D
+@SP
+M=M+1
 // sub
 @SP
 M=M-1
@@ -271,6 +284,8 @@ D=M
 M=M-1
 A=M
 M=M-D
+@SP
+M=M+1
 // push temp 6
 @5
 D=A
@@ -291,3 +306,5 @@ D=M
 M=M-1
 A=M
 M=M+D
+@SP
+M=M+1
