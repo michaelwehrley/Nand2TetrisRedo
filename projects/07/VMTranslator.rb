@@ -45,6 +45,7 @@ class VMTranslate
   private
 
   def pop(register, target, is_temp)
+    decrement_stack_pointer
     # get value that is current on top of stack
     append("@SP")
     append("A=M")
@@ -65,8 +66,6 @@ class VMTranslate
     append("D=M")
     append("@targetLocation")
     append("M=D")
-
-    decrement_stack_pointer
   end
 
   def push_constant
