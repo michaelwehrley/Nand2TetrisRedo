@@ -1,7 +1,7 @@
 require "byebug"
 
 class VMTranslate
-  attr_reader :assembly_file, :file
+  attr_reader :assembly_file, :file, :relative_assembly_file_name
 
   TRANSLATIONS = {
     local: "LCL",
@@ -12,7 +12,8 @@ class VMTranslate
   }.freeze
 
   def initialize(file)
-    @file = file    
+    @file = file
+    @relative_assembly_file_name = /\w+$/.match(file)
     @assembly_file = File.open(File.join(File.dirname(__FILE__), "#{file}.asm"), "w")
   end
 
@@ -36,8 +37,12 @@ class VMTranslate
         push_constant
       elsif action == "push" && segment?(segment)
         push(register, value, segment == "temp")
+      elsif action == "push" && segment == "static"
+        push_static(value)
       elsif action == "pop" && segment?(segment)
         pop(register, value, segment == "temp")
+      elsif action == "pop" && segment == "static"
+        pop_static(value)
       else
         byebug
       end
@@ -81,6 +86,15 @@ class VMTranslate
     append("M=D")
   end
 
+  def pop_static(target)
+    decrement_stack_pointer
+    append("@SP")
+    append("A=M")
+    append("D=M")
+    append("@#{relative_assembly_file_name}.#{target}")
+    append("M=D")
+  end
+
   def push_constant
     append("D=A")
     append("@SP")
@@ -94,6 +108,15 @@ class VMTranslate
     append(is_temp ? "D=A" : "D=M")
     append("@#{target}")
     append("A=D+A")
+    append("D=M")
+    append("@SP")
+    append("A=M")
+    append("M=D")
+    increment_stack_pointer
+  end
+
+  def push_static(target)
+    append("@#{relative_assembly_file_name}.#{target}")
     append("D=M")
     append("@SP")
     append("A=M")
