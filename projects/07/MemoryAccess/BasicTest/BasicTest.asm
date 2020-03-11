@@ -8,6 +8,8 @@ M=D
 M=M+1
 // pop local 0
 @SP
+M=M-1
+@SP
 A=M
 D=M
 @stackValue
@@ -22,8 +24,6 @@ M=D
 D=M
 @targetLocation
 M=D
-@SP
-M=M-1
 // push constant 21
 @21
 D=A
@@ -42,6 +42,8 @@ M=D
 M=M+1
 // pop argument 2
 @SP
+M=M-1
+@SP
 A=M
 D=M
 @stackValue
@@ -56,9 +58,9 @@ M=D
 D=M
 @targetLocation
 M=D
+// pop argument 1
 @SP
 M=M-1
-// pop argument 1
 @SP
 A=M
 D=M
@@ -74,8 +76,6 @@ M=D
 D=M
 @targetLocation
 M=D
-@SP
-M=M-1
 // push constant 36
 @36
 D=A
@@ -85,6 +85,8 @@ M=D
 @SP
 M=M+1
 // pop this 6
+@SP
+M=M-1
 @SP
 A=M
 D=M
@@ -100,8 +102,6 @@ M=D
 D=M
 @targetLocation
 M=D
-@SP
-M=M-1
 // push constant 42
 @42
 D=A
@@ -120,6 +120,8 @@ M=D
 M=M+1
 // pop that 5
 @SP
+M=M-1
+@SP
 A=M
 D=M
 @stackValue
@@ -134,9 +136,9 @@ M=D
 D=M
 @targetLocation
 M=D
+// pop that 2
 @SP
 M=M-1
-// pop that 2
 @SP
 A=M
 D=M
@@ -152,8 +154,6 @@ M=D
 D=M
 @targetLocation
 M=D
-@SP
-M=M-1
 // push constant 510
 @510
 D=A
@@ -163,6 +163,8 @@ M=D
 @SP
 M=M+1
 // pop temp 6
+@SP
+M=M-1
 @SP
 A=M
 D=M
@@ -178,8 +180,6 @@ M=D
 D=M
 @targetLocation
 M=D
-@SP
-M=M-1
 // push local 0
 @LCL
 D=M
@@ -203,6 +203,14 @@ M=D
 @SP
 M=M+1
 // add
+@SP
+M=M-1
+A=M
+D=M
+@SP
+M=M-1
+A=M
+M=M+D
 // push argument 1
 @ARG
 D=M
@@ -215,6 +223,14 @@ M=D
 @SP
 M=M+1
 // sub
+@SP
+M=M-1
+A=M
+D=M
+@SP
+M=M-1
+A=M
+M=M-D
 // push this 6
 @THIS
 D=M
@@ -238,7 +254,23 @@ M=D
 @SP
 M=M+1
 // add
+@SP
+M=M-1
+A=M
+D=M
+@SP
+M=M-1
+A=M
+M=M+D
 // sub
+@SP
+M=M-1
+A=M
+D=M
+@SP
+M=M-1
+A=M
+M=M-D
 // push temp 6
 @5
 D=A
@@ -251,3 +283,11 @@ M=D
 @SP
 M=M+1
 // add
+@SP
+M=M-1
+A=M
+D=M
+@SP
+M=M-1
+A=M
+M=M+D

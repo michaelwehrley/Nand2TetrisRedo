@@ -28,7 +28,9 @@ class VMTranslate
       register = register_name(segment)
 
       if action == "add"
-        byebug
+        add("+")
+      elsif action == "sub"
+        add("-")
       elsif action == "push" && segment == "constant"
         append("@#{value}")
         push_constant
@@ -43,6 +45,15 @@ class VMTranslate
   end
 
   private
+
+  def add(operation)
+    decrement_stack_pointer
+    append("A=M")
+    append("D=M")
+    decrement_stack_pointer
+    append("A=M")
+    append("M=M#{operation}D")
+  end
 
   def pop(register, target, is_temp)
     decrement_stack_pointer
