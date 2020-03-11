@@ -39,12 +39,16 @@ class VMTranslate
         push(register, value, segment == "temp")
       elsif action == "push" && segment == "static"
         push_static(value)
+      elsif action == "push" && segment == "pointer"
+        push_pointer(value)
       elsif action == "pop" && segment?(segment)
         pop(register, value, segment == "temp")
       elsif action == "pop" && segment == "static"
         pop_static(value)
+      elsif action == "pop" && segment == "pointer"
+        pop_pointer(value)
       else
-        byebug
+        raise "CommandNotRecognized"
       end
     end
   end
@@ -93,6 +97,24 @@ class VMTranslate
     append("D=M")
     append("@#{relative_assembly_file_name}.#{target}")
     append("M=D")
+  end
+
+  def pop_pointer(value)
+    decrement_stack_pointer
+    append("@SP")
+    append("A=M")
+    append("D=M")
+    value == "0" ? append("@THIS") : append("@THAT")
+    append("M=D")
+  end
+
+  def push_pointer(value)
+    value == "0" ? append("@THIS") : append("@THAT")
+    append("D=M")
+    append("@SP")
+    append("A=M")
+    append("M=D")
+    increment_stack_pointer
   end
 
   def push_constant
