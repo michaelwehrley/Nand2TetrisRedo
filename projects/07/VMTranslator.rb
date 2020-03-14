@@ -44,6 +44,8 @@ class VMTranslate
         _and
       elsif action == "or"
         _or
+      elsif action == "not"
+        _not
       elsif action == "push" && segment == "constant"
         append("@#{value}")
         push_constant
@@ -126,14 +128,35 @@ class VMTranslate
   def neg
     decrement_stack_pointer
     append("A=M")
-    append("M=!M")
+    append("M=-M")
     increment_stack_pointer  
   end
 
   def _and
+    decrement_stack_pointer
+    append("A=M")
+    append("D=M")
+    decrement_stack_pointer
+    append("A=M")
+    append("M=M&D")
+    increment_stack_pointer
   end
 
   def _or
+    decrement_stack_pointer
+    append("A=M")
+    append("D=M")
+    decrement_stack_pointer
+    append("A=M")
+    append("M=M|D")
+    increment_stack_pointer
+  end
+
+  def _not
+    decrement_stack_pointer
+    append("A=M")
+    append("M=!M")
+    increment_stack_pointer  
   end
 
   def add(operation)
