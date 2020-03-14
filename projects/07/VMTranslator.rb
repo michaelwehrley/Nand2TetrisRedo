@@ -1,7 +1,7 @@
 require "byebug"
 
 class VMTranslate
-  attr_reader :assembly_file, :file, :relative_assembly_file_name
+  attr_reader :assembly_file, :file, :line_count, :relative_assembly_file_name
 
   TRANSLATIONS = {
     local: "LCL",
@@ -13,6 +13,7 @@ class VMTranslate
 
   def initialize(file)
     @file = file
+    @line_count = 0
     @relative_assembly_file_name = /\w+$/.match(file)
     @assembly_file = File.open(File.join(File.dirname(__FILE__), "#{file}.asm"), "w")
   end
@@ -21,7 +22,6 @@ class VMTranslate
     File.open(File.join(File.dirname(__FILE__), "#{file}.vm")).each do |line|
       line = line.gsub(/\/{2}.*/, "").strip
       next if white_space_or_comment?(line)
-
       append_comment(line)
       action = parse(line)[1]
       segment = parse(line)[2]
@@ -32,6 +32,12 @@ class VMTranslate
         add("+")
       elsif action == "sub"
         add("-")
+      elsif action == "eq"
+        equal
+      elsif action == "lt"
+        less_than
+      elsif action == "gt"
+        greater_than
       elsif action == "push" && segment == "constant"
         append("@#{value}")
         push_constant
@@ -48,12 +54,68 @@ class VMTranslate
       elsif action == "pop" && segment == "pointer"
         pop_pointer(value)
       else
-        raise "CommandNotRecognized"
+        # raise "UnrecognizedCommand"
       end
     end
   end
 
   private
+
+  # -1 is TRUE (1111111111111111)
+  # 0 is FALSE
+  def equal
+    decrement_stack_pointer
+    append("A=M")
+    append("D=M")
+    decrement_stack_pointer
+    append("A=M")
+    append("D=D-M")
+    append("M=0") # set to not equal by default: `false`, i.e., 0000000000000000
+    append("@#{line_count + 7}")
+    append("D;JNE") # ...
+    append("@0")
+    append("D=A-1")
+    append("@SP")
+    append("A=M")
+    append("M=D")
+    increment_stack_pointer   
+  end
+
+  def less_than
+    decrement_stack_pointer
+    append("A=M")
+    append("D=M")
+    decrement_stack_pointer
+    append("A=M")
+    append("D=M-D")
+    append("M=0") # set to not equal by default: `false`, i.e., 0000000000000000
+    append("@#{line_count + 7}")
+    append("D;JGE") # ...
+    append("@0")
+    append("D=A-1")
+    append("@SP")
+    append("A=M")
+    append("M=D")
+    increment_stack_pointer   
+  end
+
+  def greater_than
+    decrement_stack_pointer
+    append("A=M")
+    append("D=M")
+    decrement_stack_pointer
+    append("A=M")
+    append("D=M-D")
+    append("M=0") # set to not equal by default: `false`, i.e., 0000000000000000
+    append("@#{line_count + 7}")
+    append("D;JLE") # ...
+    append("@0")
+    append("D=A-1")
+    append("@SP")
+    append("A=M")
+    append("M=D")
+    increment_stack_pointer   
+  end
 
   def add(operation)
     decrement_stack_pointer
@@ -147,19 +209,22 @@ class VMTranslate
   end
 
   def append(content)
+    @line_count += 1
     File.write(assembly_file, "#{content}\n", mode: "a")
   end
 
   def append_comment(content)
-    append("// #{content}")
+    File.write(assembly_file, "// #{content}\n", mode: "a")
   end
 
   def decrement_stack_pointer
-    append("@SP\nM=M-1")
+    append("@SP")
+    append("M=M-1")
   end
 
   def increment_stack_pointer
-    append("@SP\nM=M+1")
+    append("@SP")
+    append("M=M+1")
   end
 
   def parse(line)
