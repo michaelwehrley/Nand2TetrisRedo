@@ -38,6 +38,12 @@ class VMTranslate
         less_than
       elsif action == "gt"
         greater_than
+      elsif action == "neg"
+        neg
+      elsif action == "and"
+        _and
+      elsif action == "or"
+        _or
       elsif action == "push" && segment == "constant"
         append("@#{value}")
         push_constant
@@ -114,7 +120,20 @@ class VMTranslate
     append("@SP")
     append("A=M")
     append("M=D")
-    increment_stack_pointer   
+    increment_stack_pointer
+  end
+
+  def neg
+    decrement_stack_pointer
+    append("A=M")
+    append("M=!M")
+    increment_stack_pointer  
+  end
+
+  def _and
+  end
+
+  def _or
   end
 
   def add(operation)
