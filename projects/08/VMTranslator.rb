@@ -61,8 +61,16 @@ class VMTranslate
         pop_static(value)
       elsif action == "pop" && segment == "pointer"
         pop_pointer(value)
+      elsif action == "label"
+        File.write(assembly_file, "(#{segment})\n", mode: "a")
+      elsif action == "if-goto"
+        decrement_stack_pointer
+        append("A=M")
+        append("D=M")
+        append("@#{segment}")
+        append("D;JGT") # This doesn't seem correct, but b/c we are counting down, it works.
       else
-        # raise "UnrecognizedCommand"
+        raise "UnrecognizedCommand"
       end
     end
   end
@@ -270,7 +278,7 @@ class VMTranslate
   end
 
   def parse(line)
-    /(^\w+)\s(\w+)\s(\d+$)/.match(line) || /(^\w+$)/.match(line)
+    /(^\w+)\s(\w+)\s(\d+$)/.match(line) || /(^\w+$)/.match(line) || /(^label|if-goto)\s(\S*$)/.match(line)
   end
 
   def white_space_or_comment?(line)
