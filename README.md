@@ -179,4 +179,8 @@ Chpater 7 - Part 1: Virtual Machine Translate `$ VMEmulator.sh`
 1. To get a feel of the project: start VM Emulator => open VM Emulator with test script  `BasicTestVME.tst` to see how it works
 2. The point of project 7: writing VM translator `$ ruby VMTranslator BasicTest.vm`
 3. `$ ruby VMTranslator BasicTest.vm` => `BasicTest.asm`
-4. *Finally: Test `BasicTest.asm` assembly code by starting CPU emulator `$ CPUEmulator.sh` and load script `BasicTest.tst` in to test!
+4. *Finally: Test `BasicTest.asm` assembly code by starting CPU emulator `$ CPUEmulator.sh` and load script `BasicTest.tst` in to test.*
+
+### Program Flow
+
+`% ruby VMTranslator.rb ProgramFlow/BasicLoop/BasicLoop`
