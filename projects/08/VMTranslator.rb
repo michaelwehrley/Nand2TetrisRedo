@@ -68,7 +68,7 @@ class VMTranslate
         append("A=M")
         append("D=M")
         append("@#{segment}")
-        append("D;JGT") # This doesn't seem correct, but b/c we are counting down, it works.
+        append("D;JNE")
       else
         raise "UnrecognizedCommand"
       end
