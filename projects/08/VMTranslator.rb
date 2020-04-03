@@ -28,6 +28,7 @@ class VMTranslate
       value = parse(line)[3]
       register = register_name(segment)
 
+      # TODO: turn into a case statement ;-)
       if action == "add"
         add("+")
       elsif action == "sub"
@@ -74,6 +75,10 @@ class VMTranslate
         # append("A=M")
         append("@#{segment}")
         append("0;JMP")
+      elsif action == "function"
+        #TODO
+      elsif action == "return"
+        #TODO
       else
         raise "UnrecognizedCommand"
       end
@@ -285,7 +290,10 @@ class VMTranslate
   end
 
   def parse(line)
-    /(^\w+)\s(\w+)\s(\d+$)/.match(line) || /(^\w+$)/.match(line) || /(^label|if-goto|goto)\s(\S*$)/.match(line)
+    /(^\w+)\s(\w+)\s(\d+$)/.match(line) ||
+      /(^\w+$)/.match(line) ||
+      /(^label|if-goto|goto)\s(\S*$)/.match(line) ||
+      /(^function)\s+(\w+\.\w+)\s+(\w+)/.match(line)
   end
 
   def white_space_or_comment?(line)
