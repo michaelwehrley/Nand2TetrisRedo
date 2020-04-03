@@ -69,9 +69,16 @@ class VMTranslate
         append("D=M")
         append("@#{segment}")
         append("D;JNE")
+      elsif action == "goto"
+        # decrement_stack_pointer
+        # append("A=M")
+        append("@#{segment}")
+        append("0;JMP")
       else
         raise "UnrecognizedCommand"
       end
+    rescue => exception
+      byebug
     end
   end
 
@@ -278,7 +285,7 @@ class VMTranslate
   end
 
   def parse(line)
-    /(^\w+)\s(\w+)\s(\d+$)/.match(line) || /(^\w+$)/.match(line) || /(^label|if-goto)\s(\S*$)/.match(line)
+    /(^\w+)\s(\w+)\s(\d+$)/.match(line) || /(^\w+$)/.match(line) || /(^label|if-goto|goto)\s(\S*$)/.match(line)
   end
 
   def white_space_or_comment?(line)

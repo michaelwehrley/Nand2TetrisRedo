@@ -184,3 +184,4 @@ Chpater 7 - Part 1: Virtual Machine Translate `$ VMEmulator.sh`
 ### Program Flow
 
 `% ruby VMTranslator.rb ProgramFlow/BasicLoop/BasicLoop`
+`% ruby VMTranslator.rb ProgramFlow/FibonacciSeries/FibonacciSeries`
