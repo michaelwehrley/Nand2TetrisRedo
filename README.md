@@ -182,6 +182,12 @@ Chpater 7 - Part 1: Virtual Machine Translate `$ VMEmulator.sh`
 4. *Finally: Test `BasicTest.asm` assembly code by starting CPU emulator `$ CPUEmulator.sh` and load script `BasicTest.tst` in to test.*
 
 ### Program Flow
+Test via ruby `% CPUEmulator.sh`
 
 `% ruby VMTranslator.rb ProgramFlow/BasicLoop/BasicLoop`
 `% ruby VMTranslator.rb ProgramFlow/FibonacciSeries/FibonacciSeries`
+
+### SimpleFunction
+Test via ruby `% CPUEmulator.sh`
+
+`% ruby VMTranslator.rb FunctionCalls/SimpleFunction/SimpleFunction`

@@ -63,7 +63,7 @@ class VMTranslate
       elsif action == "pop" && segment == "pointer"
         pop_pointer(value)
       elsif action == "label"
-        File.write(assembly_file, "(#{segment})\n", mode: "a")
+        generate_label(assembly_file: assembly_file, segment: segment)
       elsif action == "if-goto"
         decrement_stack_pointer
         append("A=M")
@@ -76,10 +76,39 @@ class VMTranslate
         append("@#{segment}")
         append("0;JMP")
       elsif action == "function"
-        #TODO
+        generate_label(assembly_file: assembly_file, segment: segment)
+        i = value.to_i
+        while i >= 1 
+          append("@#{value}")
+          push_constant
+          i = i - 1            
+        end
+        # FRAME is a temporary variable: `FRAME = LCL`
+        append("@LCL")
+        append("M=A")
+        append("D=M")
+        append("@FRAME")
+        append("M=D")
+        # Put the return=address in a temporary variable: `RET *(FRAME-5)`
+        append("@5")
+        append("D=A")
+        append("@FRAME")
+        append("A=M")
+        append("D=M-D")
+        append("@RET")
+        append("M=D")
+        # Reposition the return value for the caller: `*ARG = pop()`
+        append("@SP")
+        append("A=M")
+        append("D=M")
+        append("@ARG")
+        append("A=M")
+        append("M=D")
       elsif action == "return"
-        #TODO
+        byebug
+        # TODO
       else
+        byebug
         raise "UnrecognizedCommand"
       end
     rescue => exception
@@ -241,7 +270,7 @@ class VMTranslate
     increment_stack_pointer
   end
 
-  def push_constant
+  def push_constant # TODO: pass in constant!
     append("D=A")
     append("@SP")
     append("A=M")
@@ -310,6 +339,11 @@ class VMTranslate
     return false unless segment
 
     TRANSLATIONS.keys.include?(segment.to_sym)
+  end
+
+  def generate_label(assembly_file:, segment:)
+    # TODO (functionName$label)
+    File.write(assembly_file, "(#{segment})\n", mode: "a")
   end
 end
 
