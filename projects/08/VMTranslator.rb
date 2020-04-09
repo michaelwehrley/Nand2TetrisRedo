@@ -71,44 +71,85 @@ class VMTranslate
         append("@#{segment}")
         append("D;JNE")
       elsif action == "goto"
-        # decrement_stack_pointer
-        # append("A=M")
         append("@#{segment}")
         append("0;JMP")
       elsif action == "function"
-        generate_label(assembly_file: assembly_file, segment: segment)
         i = value.to_i
-        while i >= 1 
-          append("@#{value}")
-          push_constant
-          i = i - 1            
+        while i > 0
+          i -= 1
+          increment_stack_pointer
         end
-        # FRAME is a temporary variable: `FRAME = LCL`
+      elsif action == "return"
+        # Save caller's LCL
         append("@LCL")
-        append("M=A")
         append("D=M")
         append("@FRAME")
         append("M=D")
-        # Put the return=address in a temporary variable: `RET *(FRAME-5)`
-        append("@5")
-        append("D=A")
-        append("@FRAME")
-        append("A=M")
-        append("D=M-D")
-        append("@RET")
-        append("M=D")
-        # Reposition the return value for the caller: `*ARG = pop()`
-        append("@SP")
+
+        # TODO: (I am confused here) Put the `return-address` in a temporary variable.
+        # append("@5")
+        # append("D=A")
+        # append("@FRAME")
+        # append("D=M-D")
+        # append("A=D")
+        # append("D=M")
+        # append("@RET")
+        # append("M=D")
+
+        # Reposition the `return` value for the caller -
+        # (This is the return value for the caller)
+        decrement_stack_pointer
         append("A=M")
         append("D=M")
         append("@ARG")
         append("A=M")
         append("M=D")
-      elsif action == "return"
-        byebug
-        # TODO
+        # Restore SP of the caller
+        append("@ARG")
+        append("D=M+1")
+        append("@SP")
+        append("M=D")
+        # Restore THAT
+        append("@1")
+        append("D=A")
+        append("@FRAME")
+        append("D=M-D")
+        append("A=D")
+        append("D=M")
+        append("@THAT")
+        append("M=D")
+        # Restore THIS
+        append("@2")
+        append("D=A")
+        append("@FRAME")
+        append("D=M-D")
+        append("A=D")
+        append("D=M")
+        append("@THIS")
+        append("M=D")
+        # Restore ARG
+        append("@3")
+        append("D=A")
+        append("@FRAME")
+        append("D=M-D")
+        append("A=D")
+        append("D=M")
+        append("@ARG")
+        append("M=D")
+        # Restore LCL
+        append("@4")
+        append("D=A")
+        append("@FRAME")
+        append("D=M-D")
+        append("A=D")
+        append("D=M")
+        append("@LCL")
+        append("M=D")
+        # TODO: goto @RET - Goto retun-address (in the caller's code)
+        append("@SP")
+        append("A=M")
+        append("0;JMP")
       else
-        byebug
         raise "UnrecognizedCommand"
       end
     rescue => exception
