@@ -1,7 +1,7 @@
 require "byebug"
 
 class VMTranslate
-  attr_reader :assembly_file, :file, :line_count, :relative_assembly_file_name
+  attr_reader :assembly_file, :file, :function_stack, :line_count, :relative_assembly_file_name
 
   TRANSLATIONS = {
     local: "LCL",
@@ -16,6 +16,7 @@ class VMTranslate
     @line_count = 0
     @relative_assembly_file_name = /\w+$/.match(file)
     @assembly_file = File.open(File.join(File.dirname(__FILE__), "#{file}.asm"), "w")
+    @function_stack = []
   end
 
   def write
@@ -68,12 +69,15 @@ class VMTranslate
         decrement_stack_pointer
         append("A=M")
         append("D=M")
-        append("@#{segment}")
+        append("@#{relative_label(segment)}")
         append("D;JNE")
       elsif action == "goto"
-        append("@#{segment}")
+        append("@#{relative_label(segment)}")
         append("0;JMP")
       elsif action == "function"
+        function_stack << segment
+        append("@#{relative_label(segment)}")
+        File.write(assembly_file, "(#{relative_label(segment)})\n", mode: "a")
         i = value.to_i
         while i > 0
           i -= 1
@@ -149,6 +153,7 @@ class VMTranslate
         append("@SP")
         append("A=M")
         append("0;JMP")
+        function_stack.pop()
       elsif action == "call"
         call
       else
@@ -389,8 +394,15 @@ class VMTranslate
   end
 
   def generate_label(assembly_file:, segment:)
-    # TODO (functionName$label)
-    File.write(assembly_file, "(#{segment})\n", mode: "a")
+    File.write(assembly_file, "(#{relative_label(segment)})\n", mode: "a")
+  end
+
+  def relative_label(segment)
+    "#{current_function_stack}$#{segment}"
+  end
+
+  def current_function_stack
+    function_stack.last
   end
 end
 
