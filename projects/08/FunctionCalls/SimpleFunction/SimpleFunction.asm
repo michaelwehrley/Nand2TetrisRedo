@@ -1,6 +1,5 @@
-// function Simple.test 2
-@Simple.test$Simple.test
-(Simple.test$Simple.test)
+// function SimpleFunction.test 2
+(SimpleFunction.test)
 @SP
 M=M+1
 @SP

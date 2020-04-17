@@ -1,4 +1,5 @@
 // function Sys.init 0
+(Sys.init)
 // push constant 4000
 @4000
 D=A
@@ -32,6 +33,7 @@ D=M
 @THAT
 M=D
 // call Sys.main 0
+@Sys.main
 // pop temp 1
 @SP
 M=M-1
@@ -52,11 +54,12 @@ D=M
 A=M
 M=D
 // label LOOP
-(LOOP)
+(Sys.init$LOOP)
 // goto LOOP
-@LOOP
+@Sys.init$LOOP
 0;JMP
 // function Sys.main 5
+(Sys.main)
 @SP
 M=M+1
 @SP
@@ -189,6 +192,7 @@ M=D
 @SP
 M=M+1
 // call Sys.add12 1
+@Sys.add12
 // pop temp 0
 @SP
 M=M-1
@@ -359,6 +363,7 @@ M=D
 A=M
 0;JMP
 // function Sys.add12 0
+(Sys.add12)
 // push constant 4002
 @4002
 D=A
