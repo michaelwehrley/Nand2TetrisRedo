@@ -76,7 +76,6 @@ class VMTranslate
         append("0;JMP")
       elsif action == "function"
         function_stack << segment
-        # append("@#{relative_label(segment)}")
         File.write(assembly_file, "(#{segment})\n", mode: "a")
         i = value.to_i
         while i > 0
