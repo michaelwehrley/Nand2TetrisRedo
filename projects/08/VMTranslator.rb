@@ -149,6 +149,8 @@ class VMTranslate
         append("@SP")
         append("A=M")
         append("0;JMP")
+      elsif action == "call"
+        call
       else
         raise "UnrecognizedCommand"
       end
@@ -158,6 +160,9 @@ class VMTranslate
   end
 
   private
+
+  def call
+  end
 
   # -1 is TRUE (1111111111111111)
   # 0 is FALSE
@@ -363,7 +368,8 @@ class VMTranslate
     /(^\w+)\s(\w+)\s(\d+$)/.match(line) ||
       /(^\w+$)/.match(line) ||
       /(^label|if-goto|goto)\s(\S*$)/.match(line) ||
-      /(^function)\s+(\w+\.\w+)\s+(\w+)/.match(line)
+      /(^function)\s+(\w+\.\w+)\s+(\w+)/.match(line) ||
+      /(call)\s+(Sys.\w+)\s+(\d+)/.match(line)
   end
 
   def white_space_or_comment?(line)
