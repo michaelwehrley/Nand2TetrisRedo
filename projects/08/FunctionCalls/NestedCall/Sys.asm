@@ -314,7 +314,7 @@ M=M+1
 // return
 @LCL
 D=M
-@FRAME
+@Sys.main$FRAME
 M=D
 @SP
 M=M-1
@@ -329,7 +329,7 @@ D=M+1
 M=D
 @1
 D=A
-@FRAME
+@Sys.main$FRAME
 D=M-D
 A=D
 D=M
@@ -337,7 +337,7 @@ D=M
 M=D
 @2
 D=A
-@FRAME
+@Sys.main$FRAME
 D=M-D
 A=D
 D=M
@@ -345,7 +345,7 @@ D=M
 M=D
 @3
 D=A
-@FRAME
+@Sys.main$FRAME
 D=M-D
 A=D
 D=M
@@ -353,7 +353,7 @@ D=M
 M=D
 @4
 D=A
-@FRAME
+@Sys.main$FRAME
 D=M-D
 A=D
 D=M
@@ -429,7 +429,7 @@ M=M+1
 // return
 @LCL
 D=M
-@FRAME
+@Sys.add12$FRAME
 M=D
 @SP
 M=M-1
@@ -444,7 +444,7 @@ D=M+1
 M=D
 @1
 D=A
-@FRAME
+@Sys.add12$FRAME
 D=M-D
 A=D
 D=M
@@ -452,7 +452,7 @@ D=M
 M=D
 @2
 D=A
-@FRAME
+@Sys.add12$FRAME
 D=M-D
 A=D
 D=M
@@ -460,7 +460,7 @@ D=M
 M=D
 @3
 D=A
-@FRAME
+@Sys.add12$FRAME
 D=M-D
 A=D
 D=M
@@ -468,7 +468,7 @@ D=M
 M=D
 @4
 D=A
-@FRAME
+@Sys.add12$FRAME
 D=M-D
 A=D
 D=M

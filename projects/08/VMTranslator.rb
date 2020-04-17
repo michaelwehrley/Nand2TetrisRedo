@@ -87,7 +87,7 @@ class VMTranslate
         # Save caller's LCL
         append("@LCL")
         append("D=M")
-        append("@FRAME")
+        append_local_var("FRAME")
         append("M=D")
 
         # TODO: (I am confused here) Put the `return-address` in a temporary variable.
@@ -97,7 +97,7 @@ class VMTranslate
         # append("D=M-D")
         # append("A=D")
         # append("D=M")
-        # append("@RET")
+        # append_local_var("RET")
         # append("M=D")
 
         # Reposition the `return` value for the caller -
@@ -116,7 +116,7 @@ class VMTranslate
         # Restore THAT
         append("@1")
         append("D=A")
-        append("@FRAME")
+        append_local_var("FRAME")
         append("D=M-D")
         append("A=D")
         append("D=M")
@@ -125,7 +125,7 @@ class VMTranslate
         # Restore THIS
         append("@2")
         append("D=A")
-        append("@FRAME")
+        append_local_var("FRAME")
         append("D=M-D")
         append("A=D")
         append("D=M")
@@ -134,7 +134,7 @@ class VMTranslate
         # Restore ARG
         append("@3")
         append("D=A")
-        append("@FRAME")
+        append_local_var("FRAME")
         append("D=M-D")
         append("A=D")
         append("D=M")
@@ -143,7 +143,7 @@ class VMTranslate
         # Restore LCL
         append("@4")
         append("D=A")
-        append("@FRAME")
+        append_local_var("FRAME")
         append("D=M-D")
         append("A=D")
         append("D=M")
@@ -165,6 +165,10 @@ class VMTranslate
   end
 
   private
+
+  def append_local_var(variable_name)
+    append("@#{current_function_stack}$#{variable_name}") # TODO
+  end
 
   def call(segment)
     append("@#{segment}") # TODO

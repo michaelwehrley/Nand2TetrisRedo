@@ -91,7 +91,7 @@ M=M+1
 // return
 @LCL
 D=M
-@FRAME
+@SimpleFunction.test$FRAME
 M=D
 @SP
 M=M-1
@@ -106,7 +106,7 @@ D=M+1
 M=D
 @1
 D=A
-@FRAME
+@SimpleFunction.test$FRAME
 D=M-D
 A=D
 D=M
@@ -114,7 +114,7 @@ D=M
 M=D
 @2
 D=A
-@FRAME
+@SimpleFunction.test$FRAME
 D=M-D
 A=D
 D=M
@@ -122,7 +122,7 @@ D=M
 M=D
 @3
 D=A
-@FRAME
+@SimpleFunction.test$FRAME
 D=M-D
 A=D
 D=M
@@ -130,7 +130,7 @@ D=M
 M=D
 @4
 D=A
-@FRAME
+@SimpleFunction.test$FRAME
 D=M-D
 A=D
 D=M
