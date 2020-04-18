@@ -33,7 +33,6 @@ D=M
 @THAT
 M=D
 // call Sys.main 0
-@Sys.main
 // pop temp 1
 @SP
 M=M-1
@@ -62,14 +61,39 @@ M=D
 (Sys.main)
 @SP
 M=M+1
+@0
+D=A
+@SP
+A=M
+M=D
 @SP
 M=M+1
+@0
+D=A
+@SP
+A=M
+M=D
 @SP
 M=M+1
+@0
+D=A
+@SP
+A=M
+M=D
 @SP
 M=M+1
+@0
+D=A
+@SP
+A=M
+M=D
 @SP
 M=M+1
+@0
+D=A
+@SP
+A=M
+M=D
 // push constant 4001
 @4001
 D=A
@@ -192,7 +216,6 @@ M=D
 @SP
 M=M+1
 // call Sys.add12 1
-@Sys.add12
 // pop temp 0
 @SP
 M=M-1
@@ -316,6 +339,12 @@ M=M+1
 D=M
 @Sys.main$FRAME
 M=D
+@5
+D=A
+@Sys.main$FRAME
+D=M-D
+@Sys.main$RET
+M=D
 @SP
 M=M-1
 A=M
@@ -359,7 +388,7 @@ A=D
 D=M
 @LCL
 M=D
-@SP
+@Sys.main$RET
 A=M
 0;JMP
 // function Sys.add12 0
@@ -431,6 +460,12 @@ M=M+1
 D=M
 @Sys.add12$FRAME
 M=D
+@5
+D=A
+@Sys.add12$FRAME
+D=M-D
+@Sys.add12$RET
+M=D
 @SP
 M=M-1
 A=M
@@ -474,6 +509,6 @@ A=D
 D=M
 @LCL
 M=D
-@SP
+@Sys.add12$RET
 A=M
 0;JMP

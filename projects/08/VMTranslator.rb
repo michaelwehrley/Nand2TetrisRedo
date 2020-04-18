@@ -1,7 +1,7 @@
 require "byebug"
 
 class VMTranslate
-  attr_reader :assembly_file, :file, :function_stack, :line_count, :relative_assembly_file_name
+  attr_reader :assembly_file, :relative_file_path, :function_stack, :line_count, :output_file
 
   TRANSLATIONS = {
     local: "LCL",
@@ -11,16 +11,19 @@ class VMTranslate
     temp: nil
   }.freeze
 
-  def initialize(file)
-    @file = file
+  def initialize(relative_file_path, output_file = "")
+    @relative_file_path = relative_file_path
+
     @line_count = 0
-    @relative_assembly_file_name = /\w+$/.match(file)
-    @assembly_file = File.open(File.join(File.dirname(__FILE__), "#{file}.asm"), "w")
+    # This either sets it or the file name is deduced, but the file name and is a match object
+    @output_file = output_file || /\w+$/.match(relative_file_path).to_s
+    byebug
+    @assembly_file = File.open(File.join(File.dirname(__FILE__), "#{output_file}.asm"), "w")
     @function_stack = []
   end
 
   def write
-    File.open(File.join(File.dirname(__FILE__), "#{file}.vm")).each do |line|
+    File.open(File.join(File.dirname(__FILE__), "#{relative_file_path}.vm")).each do |line|
       line = line.gsub(/\/{2}.*/, "").strip
       next if white_space_or_comment?(line)
       append_comment(line)
@@ -302,7 +305,7 @@ class VMTranslate
     append("@SP")
     append("A=M")
     append("D=M")
-    append("@#{relative_assembly_file_name}.#{target}")
+    append("@#{output_file}.#{target}")
     append("M=D")
   end
 
@@ -345,7 +348,7 @@ class VMTranslate
   end
 
   def push_static(target)
-    append("@#{relative_assembly_file_name}.#{target}")
+    append("@#{output_file}.#{target}")
     append("D=M")
     append("@SP")
     append("A=M")
@@ -419,5 +422,5 @@ end
 
 # ARGV: argument vector
 # ARGC: argument count
-translator = VMTranslate.new(ARGV.first)
+translator = VMTranslate.new(ARGV[0], ARGV[1])
 translator.write
