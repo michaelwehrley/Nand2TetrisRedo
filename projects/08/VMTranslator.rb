@@ -1,7 +1,7 @@
 require "byebug"
 
 class VMTranslate
-  attr_reader :assembly_file, :relative_file_path, :function_stack, :line_count, :output_file
+  attr_reader :assembly_file, :src_file, :function_stack, :line_count, :output_file
 
   TRANSLATIONS = {
     local: "LCL",
@@ -11,19 +11,20 @@ class VMTranslate
     temp: nil
   }.freeze
 
-  def initialize(relative_file_path, output_file = "")
-    @relative_file_path = relative_file_path
+  # TODAY: ruby VMTranslator.rb FunctionCalls/NestedCall/Sys FunctionCalls/NestedCall/NestedCall
+  # TODO: ruby VMTranslator.rb --path=FunctionCalls/NestedCall --in=Sys --out=NestedCall
+  def initialize(src_file, output_file = "")
+    @src_file = src_file
 
     @line_count = 0
     # This either sets it or the file name is deduced, but the file name and is a match object
-    @output_file = output_file || /\w+$/.match(relative_file_path).to_s
-    byebug
+    @output_file = output_file || /\w+$/.match(src_file).to_s
     @assembly_file = File.open(File.join(File.dirname(__FILE__), "#{output_file}.asm"), "w")
     @function_stack = []
   end
 
   def write
-    File.open(File.join(File.dirname(__FILE__), "#{relative_file_path}.vm")).each do |line|
+    File.open(File.join(File.dirname(__FILE__), "#{src_file}.vm")).each do |line|
       line = line.gsub(/\/{2}.*/, "").strip
       next if white_space_or_comment?(line)
       append_comment(line)

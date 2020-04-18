@@ -191,3 +191,4 @@ Test via ruby `% CPUEmulator.sh`
 Test via ruby `% CPUEmulator.sh`
 
 `% ruby VMTranslator.rb FunctionCalls/SimpleFunction/SimpleFunction`
+`% ruby VMTranslator.rb FunctionCalls/NestedCall/Sys FunctionCalls/NestedCall/NestedCall`
