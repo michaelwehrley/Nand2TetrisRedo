@@ -152,6 +152,6 @@ A=D
 D=M
 @LCL
 M=D
-@SP
+@SimpleFunction.test$RET
 A=M
 0;JMP
