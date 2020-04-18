@@ -81,6 +81,7 @@ class VMTranslate
         while i > 0
           i -= 1
           increment_stack_pointer
+          initialize_to_zero
         end
       elsif action == "return"
         # Save caller's LCL
@@ -171,6 +172,7 @@ class VMTranslate
 
   def call(segment)
     append("@#{segment}") # TODO
+    
   end
 
   # -1 is TRUE (1111111111111111)
@@ -371,6 +373,14 @@ class VMTranslate
   def increment_stack_pointer
     append("@SP")
     append("M=M+1")
+  end
+
+  def initialize_to_zero
+    append("@0")
+    append("D=A")
+    append("@SP")
+    append("A=M")
+    append("M=D")
   end
 
   def parse(line)
