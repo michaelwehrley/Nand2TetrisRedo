@@ -33,6 +33,7 @@ D=M
 @THAT
 M=D
 // call Sys.main 0
+@Sys.init$return-address
 @Sys.main
 // pop temp 1
 @SP
@@ -62,14 +63,39 @@ M=D
 (Sys.main)
 @SP
 M=M+1
+@0
+D=A
+@SP
+A=M
+M=D
 @SP
 M=M+1
+@0
+D=A
+@SP
+A=M
+M=D
 @SP
 M=M+1
+@0
+D=A
+@SP
+A=M
+M=D
 @SP
 M=M+1
+@0
+D=A
+@SP
+A=M
+M=D
 @SP
 M=M+1
+@0
+D=A
+@SP
+A=M
+M=D
 // push constant 4001
 @4001
 D=A
@@ -192,6 +218,7 @@ M=D
 @SP
 M=M+1
 // call Sys.add12 1
+@Sys.main$return-address
 @Sys.add12
 // pop temp 0
 @SP

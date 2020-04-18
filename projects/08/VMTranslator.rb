@@ -90,15 +90,13 @@ class VMTranslate
         append_local_var("FRAME")
         append("M=D")
 
-        # TODO: (I am confused here) Put the `return-address` in a temporary variable.
-        # append("@5")
-        # append("D=A")
-        # append("@FRAME")
-        # append("D=M-D")
-        # append("A=D")
-        # append("D=M")
-        # append_local_var("RET")
-        # append("M=D")
+        # Put the `return-address` in a temporary variable.
+        append("@5")
+        append("D=A")
+        append_local_var("FRAME")
+        append("D=M-D")
+        append_local_var("RET")
+        append("M=D")
 
         # Reposition the `return` value for the caller -
         # (This is the return value for the caller)
@@ -167,12 +165,11 @@ class VMTranslate
   private
 
   def append_local_var(variable_name)
-    append("@#{current_function_stack}$#{variable_name}") # TODO
+    # TODO: add file path
+    append("@#{current_function_stack}$#{variable_name}")
   end
 
   def call(segment)
-    append("@#{segment}") # TODO
-    
   end
 
   # -1 is TRUE (1111111111111111)

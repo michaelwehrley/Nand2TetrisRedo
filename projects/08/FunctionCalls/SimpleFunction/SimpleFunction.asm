@@ -103,6 +103,12 @@ M=M+1
 D=M
 @SimpleFunction.test$FRAME
 M=D
+@5
+D=A
+@SimpleFunction.test$FRAME
+D=M-D
+@SimpleFunction.test$RET
+M=D
 @SP
 M=M-1
 A=M
