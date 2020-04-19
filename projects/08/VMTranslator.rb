@@ -60,7 +60,7 @@ class VMTranslate
       elsif action == "push" && segment == "static"
         push_static(value)
       elsif action == "push" && segment == "pointer"
-        push_pointer(value)
+        value == "0" ? push_pointer("THIS") : push_pointer("THAT")
       elsif action == "pop" && segment?(segment)
         pop(register, value, segment == "temp")
       elsif action == "pop" && segment == "static"
@@ -84,7 +84,6 @@ class VMTranslate
         i = value.to_i
         while i > 0
           i -= 1
-          increment_stack_pointer
           initialize_to_zero
         end
       elsif action == "return"
@@ -157,7 +156,7 @@ class VMTranslate
         append("0;JMP")
         function_stack.pop()
       elsif action == "call"
-        call(segment)
+        call(segment, value.to_i)
       else
         raise "UnrecognizedCommand"
       end
@@ -173,7 +172,38 @@ class VMTranslate
     append("@#{current_function_stack}$#{variable_name}")
   end
 
-  def call(segment)
+  def call(segment, value)
+    # push return-address of calling fn (perhaps line count?)
+    append("@#{line_count}")
+    append("D=A")
+    # append_local_var("return-address")
+    append("@SP")
+    append("A=M")
+    append("M=D")
+    increment_stack_pointer
+    # push LCL of calling fn
+    push_pointer("LCL")
+    # push ARG of calling fn
+    push_pointer("ARG")
+    # push THIS of calling fn
+    push_pointer("THIS")
+    # push THAT of calling fn
+    push_pointer("THAT")
+    append("@SP")
+    append("D=M")
+    # reposition ARG (n = number of args)
+    append("@#{value + 5}")
+    append("D=D-A")
+    append("@ARG")
+    append("M=D")
+    # reposition LCL
+    append("@SP")
+    append("D=M")
+    append("@LCL")
+    append("M=D")
+    # transfer control `goto f`
+    append("@#{segment}")
+    append("0;JMP")
   end
 
   # -1 is TRUE (1111111111111111)
@@ -320,7 +350,7 @@ class VMTranslate
   end
 
   def push_pointer(value)
-    value == "0" ? append("@THIS") : append("@THAT")
+    append("@#{value}")
     append("D=M")
     append("@SP")
     append("A=M")
@@ -382,6 +412,7 @@ class VMTranslate
     append("@SP")
     append("A=M")
     append("M=D")
+    increment_stack_pointer
   end
 
   def parse(line)
