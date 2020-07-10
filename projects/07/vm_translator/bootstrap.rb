@@ -4,12 +4,12 @@ require_relative "parser"
 
 module VMTranslator
   class Bootstrap
-    include CodeWriter
-    include Parser
+    # include CodeWriter
+    # include Parser
     attr_reader :asm_file, :vm_file
 
     def initialize(source)
-      @vm_file = File.open("#{source}", "r")
+      @vm_file = File.open("#{source}", "r") # Xxx.vm or directory
       @asm_file = File.open("#{/([\/|\w]+)(\.*\w*)$/.match(source)[1]}.asm", "w")
     end
 
