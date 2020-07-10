@@ -154,9 +154,11 @@ class VMTranslate
         append_local_var("RET")
         append("A=M")
         append("0;JMP")
+        
         function_stack.pop()
       elsif action == "call"
-        call(segment, value.to_i)
+        return_address = "#{relative_label(segment)}$return-address"
+        call(segment, value.to_i, return_address)
       else
         raise "UnrecognizedCommand"
       end
@@ -172,15 +174,16 @@ class VMTranslate
     append("@#{current_function_stack}$#{variable_name}")
   end
 
-  def call(segment, value)
-    # push return-address of calling fn (perhaps line count?)
-    append("@#{line_count}")
+  def call(segment, value, return_address)
+    # storing future line return address here.
+    append("@#{line_count + 47}")
     append("D=A")
-    # append_local_var("return-address")
     append("@SP")
     append("A=M")
     append("M=D")
     increment_stack_pointer
+    # append("@#{return_address}")
+
     # push LCL of calling fn
     push_pointer("LCL")
     # push ARG of calling fn

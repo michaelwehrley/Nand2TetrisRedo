@@ -33,7 +33,7 @@ D=M
 @THAT
 M=D
 // call Sys.main 0
-@28
+@75
 D=A
 @SP
 A=M
@@ -263,7 +263,7 @@ M=D
 @SP
 M=M+1
 // call Sys.add12 1
-@240
+@287
 D=A
 @SP
 A=M
