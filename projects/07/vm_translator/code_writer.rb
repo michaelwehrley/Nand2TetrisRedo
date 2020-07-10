@@ -5,6 +5,9 @@ module VMTranslator
     def initialize(output)
     end
 
+    def write
+    end
+
     def set_file_name(file_name)
     end
 
