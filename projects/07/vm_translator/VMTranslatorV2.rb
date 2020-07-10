@@ -1,4 +1,4 @@
-# $ ruby vm_translator/VMTranslatorV2.rb FunctionCalls/NestedCall/Sys
+# $ ruby vm_translator/VMTranslatorV2.rb source
 
 require_relative "bootstrap"
 

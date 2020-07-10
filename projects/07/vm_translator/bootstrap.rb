@@ -8,10 +8,15 @@ module VMTranslator
     include Parser
     attr_reader :asm_file, :vm_file
 
-    def initialize(file)
-      path = File.join(File.expand_path("../../", __FILE__), file)
-      @vm_file = File.open("#{path}.vm", "r")
-      @asm_file = File.open("#{path}.asm", "w")
+    def initialize(source)
+      @vm_file = File.open("#{source}", "r")
+      @asm_file = File.open("#{/([\/|\w]+)(\.*\w*)$/.match(source)[1]}.asm", "w")
+    end
+
+    private
+
+    def directory?(file)
+      /([\/|\w]+)(\.*\w*)$/.match(file)[2] == ""
     end
   end
 end
