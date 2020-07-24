@@ -14,9 +14,10 @@ module VMTranslator
     def parse
       return false unless command?
       {
-        commandType: command_type,
-        arg1: arg1,
-        arg2: arg2
+        command_type: command_type,
+        arg_0: arg_0,
+        arg_1: arg_1,
+        arg_2: arg_2
       }
     end
 
@@ -33,26 +34,26 @@ module VMTranslator
       if arithmetic?
         "C_ARITHMETIC"
       else
-        "C_#{arg0.upcase}"
+        "C_#{arg_0.upcase}"
       end
     end
 
-    def arg1
-      @arg1 ||= options[1]
+    def arg_1
+      @arg_1 ||= options[1]
     end
 
-    def arg2
-      @arg2 ||= options[2]
+    def arg_2
+      @arg_2 ||= options[2]
     end
 
     # bonus private methods
 
-    def arg0
-      @arg0 ||= options[0]
+    def arg_0
+      @arg_0 ||= options[0]
     end
 
     def arithmetic?
-      ARITHMETIC_COMMANDS.include?(arg0)
+      ARITHMETIC_COMMANDS.include?(arg_0)
     end
 
     def command?

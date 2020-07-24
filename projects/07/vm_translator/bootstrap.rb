@@ -16,9 +16,7 @@ module VMTranslator
       vm_file.each do |line|
         next unless parsed_line = Parser.new(line).parse
 
-        byebug
-        assembly_code = CodeWriter.new(parsed_line).write
-        File.write(asm_file, "#{assembly_code}\n", mode: "a")
+        CodeWriter.new(asm_file: asm_file, line: parsed_line).write
       end
     end
 
