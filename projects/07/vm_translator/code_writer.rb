@@ -41,6 +41,7 @@ module VMTranslator
     private
 
     def add
+      append_comment("add")
       decrement_stack_pointer
       append("A=M")
       append("D=M")
@@ -51,6 +52,7 @@ module VMTranslator
     end
 
     def push
+      append_comment("push #{arg_1} #{arg_2}")
       append("@#{arg_2}")
       append("D=A")
       append("@SP")
@@ -75,6 +77,10 @@ module VMTranslator
     def append(value)
       # @line_count += 1
       File.write(asm_file, "#{value}\n", mode: "a")
+    end
+
+    def append_comment(value)
+      append("// #{value}")
     end
   end
 end
