@@ -4,19 +4,21 @@ require_relative "parser"
 
 module VMTranslator
   class Bootstrap
-    attr_accessor :asm_file, :vm_file
+    attr_accessor :asm_file, :vm_file, :line_count
 
     def initialize(source)
       @vm_file = File.open("#{source}", "r") # Xxx.vm or directory
       @asm_file = "#{/([\/|\w]+)(\.*\w*)$/.match(source)[1]}.asm"
       reset_output
+      @line_count = 0
     end
 
     def call
       vm_file.each do |line|
         next unless parsed_line = Parser.new(line).parse
-
-        CodeWriter.new(asm_file: asm_file, line: parsed_line).write
+        code_writer = CodeWriter.new(asm_file: @asm_file, line: parsed_line, line_count: @line_count)
+        code_writer.write
+        @line_count = code_writer.line_count
       end
     end
 

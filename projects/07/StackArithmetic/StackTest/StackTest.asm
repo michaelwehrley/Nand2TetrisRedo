@@ -14,7 +14,7 @@ A=M
 M=D
 @SP
 M=M+1
-// eq
+// eq // [256]
 @SP
 M=M-1
 A=M
@@ -49,7 +49,7 @@ A=M
 M=D
 @SP
 M=M+1
-// eq
+// eq // [257]
 @SP
 M=M-1
 A=M
@@ -84,7 +84,7 @@ A=M
 M=D
 @SP
 M=M+1
-// eq
+// eq // [258]
 @SP
 M=M-1
 A=M
@@ -119,7 +119,7 @@ A=M
 M=D
 @SP
 M=M+1
-// lt
+// lt // [259]
 @SP
 M=M-1
 A=M
@@ -154,7 +154,7 @@ A=M
 M=D
 @SP
 M=M+1
-// lt
+// lt // [260]
 @SP
 M=M-1
 A=M
@@ -189,7 +189,7 @@ A=M
 M=D
 @SP
 M=M+1
-// lt
+// lt // [261]
 @SP
 M=M-1
 A=M
@@ -224,7 +224,7 @@ A=M
 M=D
 @SP
 M=M+1
-// gt
+// gt // [262]
 @SP
 M=M-1
 A=M
@@ -259,7 +259,7 @@ A=M
 M=D
 @SP
 M=M+1
-// gt
+// gt // [263]
 @SP
 M=M-1
 A=M
@@ -294,7 +294,7 @@ A=M
 M=D
 @SP
 M=M+1
-// gt
+// gt // [264]
 @SP
 M=M-1
 A=M
