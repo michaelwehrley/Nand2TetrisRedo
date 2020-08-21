@@ -194,8 +194,8 @@ Test via ruby `% CPUEmulator.sh`
 
 `$ cd projects/07`
 
-##### Simple Add:
-`% ruby VMTranslator.rb StackArithmetic/SimpleAdd/SimpleAdd`
+##### Simple Add (v2):
+`% ruby vm_translator/VMTranslatorV2.rb StackArithmetic/SimpleAdd/SimpleAdd.vm`
 
-##### Simple Test:
-`% ruby VMTranslator.rb StackArithmetic/StackTest/StackTest`
+##### Stack Test (v2):
+`% ruby vm_translator/VMTranslatorV2.rb StackArithmetic/StackTest/StackTest.vm`
