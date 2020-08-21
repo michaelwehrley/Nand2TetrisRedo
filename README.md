@@ -190,5 +190,12 @@ Test via ruby `% CPUEmulator.sh`
 ### SimpleFunction
 Test via ruby `% CPUEmulator.sh`
 
-`% ruby VMTranslator.rb FunctionCalls/SimpleFunction/SimpleFunction`
-`% ruby VMTranslator.rb FunctionCalls/NestedCall/Sys FunctionCalls/NestedCall/NestedCall`
+#### Chapter 7:
+
+`$ cd projects/07`
+
+##### Simple Add:
+`% ruby VMTranslator.rb StackArithmetic/SimpleAdd/SimpleAdd`
+
+##### Simple Test:
+`% ruby VMTranslator.rb StackArithmetic/StackTest/StackTest`
