@@ -190,12 +190,22 @@ Test via ruby `% CPUEmulator.sh`
 ### SimpleFunction
 Test via ruby `% CPUEmulator.sh`
 
-#### Chapter 7:
+## Chapter 7:
 
 `$ cd projects/07`
 
-##### Simple Add (v2):
+### StackArithmetic
+
+#### Simple Add (v2):
+`% cd projects/07`
 `% ruby vm_translator/VMTranslatorV2.rb StackArithmetic/SimpleAdd/SimpleAdd.vm`
 
-##### Stack Test (v2):
+#### Stack Test (v2):
+`% cd projects/07`
 `% ruby vm_translator/VMTranslatorV2.rb StackArithmetic/StackTest/StackTest.vm`
+
+### Memory Access
+
+#### Basic Test (v2):
+`% cd projects/07`
+`% ruby vm_translator/VMTranslatorV2.rb MemoryAccess/BasicTest/BasicTest.vm`
