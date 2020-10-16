@@ -228,6 +228,8 @@ Test: `% CPUEmulator.sh`
 
 ## Chapter 8:
 
+### Progam Flow Commands
+
 #### Basic Loop (v2):
 `% cd projects/08`
 `% ruby vm_translator/VMTranslatorV2.rb ProgramFlow/BasicLoop/BasicLoop.vm`
@@ -239,3 +241,5 @@ Test: `% CPUEmulator.sh`
 `% ruby vm_translator/VMTranslatorV2.rb ProgramFlow/FibonacciSeries/FibonacciSeries.vm`
 Test: `% CPUEmulator.sh`
 (compare via `% ruby VMTranslator.rb ProgramFlow/FibonacciSeries/FibonacciSeries ProgramFlow/FibonacciSeries/FibonacciSeries`)
+
+### Function Calling Commands
