@@ -249,3 +249,9 @@ Test: `% CPUEmulator.sh`
 `% ruby vm_translator/VMTranslatorV2.rb FunctionCalls/SimpleFunction/SimpleFunction.vm`
 Test: `% CPUEmulator.sh`
 (compare via `% ruby VMTranslator.rb FunctionCalls/SimpleFunction/SimpleFunction FunctionCalls/SimpleFunction/SimpleFunction`)
+
+#### Nested Call
+`% cd projects/08`
+`% ruby vm_translator/VMTranslatorV2.rb FunctionCalls/NestedCall/Sys.vm`
+Test: `% CPUEmulator.sh`
+(compare via ?)

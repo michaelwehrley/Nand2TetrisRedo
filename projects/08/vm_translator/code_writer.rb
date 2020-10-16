@@ -33,11 +33,12 @@ module VMTranslator
       append_comment("#{arg_0} #{arg_1} #{arg_2}".gsub(/\s*$/, ""))
       return write_arithmetic if command_type == "C_ARITHMETIC"
       return write_push_pop if command_type == "C_POP" || command_type == "C_PUSH"
-      return write_goto if command_type == "C_GOTO"
       return write_label if command_type == "C_LABEL"
-      return write_function if command_type == "C_FUNCTION"
-      return write_return if command_type == "C_RETURN"
+      return write_goto if command_type == "C_GOTO"
       return write_if if command_type == "C_IF-GOTO"
+      return write_call if command_type == "C_CALL"
+      return write_return if command_type == "C_RETURN"
+      return write_function if command_type == "C_FUNCTION"
     end
 
     def set_file_name(file_name)
@@ -117,6 +118,10 @@ module VMTranslator
         i -= 1
         initialize_memory_segment_fn_arguments_to_zero
       end
+    end
+
+    def write_call # Chapter 8
+      # TODO
     end
 
     def write_return # Chapter 8
