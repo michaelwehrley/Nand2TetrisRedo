@@ -243,3 +243,9 @@ Test: `% CPUEmulator.sh`
 (compare via `% ruby VMTranslator.rb ProgramFlow/FibonacciSeries/FibonacciSeries ProgramFlow/FibonacciSeries/FibonacciSeries`)
 
 ### Function Calling Commands
+
+#### Simple Function
+`% cd projects/08`
+`% ruby vm_translator/VMTranslatorV2.rb FunctionCalls/SimpleFunction/SimpleFunction.vm`
+Test: `% CPUEmulator.sh`
+(compare via `% ruby VMTranslator.rb FunctionCalls/SimpleFunction/SimpleFunction FunctionCalls/SimpleFunction/SimpleFunction`)
