@@ -9,7 +9,14 @@ module VMTranslator
       that: "THAT",
     }.freeze
 
-    attr_accessor :asm_file, :command_type, :arg_0, :arg_1, :arg_2, :line_count, :relative_assembly_file_name
+    attr_accessor :asm_file,
+                  :command_type,
+                  :arg_0,
+                  :arg_1,
+                  :arg_2,
+                  :line_count,
+                  :relative_assembly_file_name#,
+                  # :function_stack
 
     def initialize(asm_file:, line:, line_count:)
       @asm_file = asm_file
@@ -19,6 +26,7 @@ module VMTranslator
       @arg_1 = line[:arg_1]
       @arg_2 = line[:arg_2]
       @line_count = line_count
+      # @function_stack = []
     end
 
     def write
@@ -64,6 +72,20 @@ module VMTranslator
       return pop_pointer if arg_0 == "pop" && arg_1 == "pointer"
       return pop_static if arg_0 == "pop" && arg_1 == "static"
       return pop if arg_0 == "pop"
+      return generate_label if arg_0 == "label"
+      return if_goto if arg_0 == "if-goto"
+    end
+
+    def if_goto # Chapter 8
+      decrement_stack_pointer
+      append("A=M")
+      append("D=M")
+      append("@$#{(arg_1)}")
+      append("D;JNE")
+    end
+
+    def generate_label # Chapter 8
+      File.write(asm_file, "($#{arg_1})\n", mode: "a")
     end
 
     def close

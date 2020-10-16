@@ -139,7 +139,7 @@ A=M
 M=D
 @SP
 M=M+1
-// if-goto LOOP_START
+// if-goto LOOP_START //
 @SP
 M=M-1
 A=M

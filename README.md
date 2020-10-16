@@ -227,3 +227,9 @@ Test: `% CPUEmulator.sh`
 (compare via `ruby VMTranslator.rb  MemoryAccess/StaticTest/StaticTest`)
 
 ## Chapter 8:
+
+#### Basic Loop (v2):
+`% cd projects/08`
+`% ruby vm_translator/VMTranslatorV2.rb ProgramFlow/BasicLoop/BasicLoop.vm`
+Test: `% CPUEmulator.sh`
+(compare via `VMTranslator.rb ProgramFlow/BasicLoop/BasicLoop ProgramFlow/BasicLoop/BasicLoop`)
