@@ -199,13 +199,18 @@ Test via ruby `% CPUEmulator.sh`
 #### Simple Add (v2):
 `% cd projects/07`
 `% ruby vm_translator/VMTranslatorV2.rb StackArithmetic/SimpleAdd/SimpleAdd.vm`
+Test: `% CPUEmulator.sh`
 
 #### Stack Test (v2):
 `% cd projects/07`
 `% ruby vm_translator/VMTranslatorV2.rb StackArithmetic/StackTest/StackTest.vm`
+Test: `% CPUEmulator.sh`
 
 ### Memory Access
 
 #### Basic Test (v2):
 `% cd projects/07`
 `% ruby vm_translator/VMTranslatorV2.rb MemoryAccess/BasicTest/BasicTest.vm`
+Test: `% CPUEmulator.sh`
+(compare via `ruby VMTranslator.rb  MemoryAccess/BasicTest/BasicTest`)
+

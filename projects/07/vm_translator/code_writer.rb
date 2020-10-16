@@ -2,6 +2,13 @@ require "byebug"
 
 module VMTranslator
   class CodeWriter
+    TRANSLATIONS = {
+      local: "LCL",
+      argument: "ARG",
+      this: "THIS",
+      that: "THAT"
+    }.freeze
+
     attr_accessor :asm_file, :command_type, :arg_0, :arg_1, :arg_2, :line_count
 
     def initialize(asm_file:, line:, line_count:)
@@ -49,6 +56,7 @@ module VMTranslator
     end
 
     def write_push_pop
+      return push_constant if arg_0 == "push" && arg_1 == "constant"
       return push if arg_0 == "push"
       return pop if arg_0 == "pop"
     end
@@ -78,7 +86,8 @@ module VMTranslator
       increment_stack_pointer
     end
 
-    def push
+    # Examples: push constant 10
+    def push_constant
       append("@#{arg_2}")
       append("D=A")
       append("@SP")
@@ -87,7 +96,43 @@ module VMTranslator
       increment_stack_pointer
     end
 
+    def push
+      # Examples: push local 0, push that 5, push argument 1, push this 6, push temp 6
+      append(arg_1 == "temp" ? "@5" : translate(arg_1))
+      append(arg_1 == "temp" ? "D=A" : "D=M")
+      append("@#{arg_2}")
+      append("A=D+A")
+      append("D=M")
+      append("@SP")
+      append("A=M")
+      append("M=D")
+      increment_stack_pointer
+    end
+
     def pop
+      # Examples: `pop local 0`, `pop argument 2`, `pop this 6`, `pop that 5`, `pop temp 6`
+      decrement_stack_pointer
+      # get value that is current on top of stack
+      append("@SP")
+      append("A=M")
+      append("D=M")
+      append("@stackValue")
+      append("M=D") # storing value to be popped in temp
+
+      # get relative address
+      append(arg_1 == "temp" ? "@5" : translate(arg_1))
+      append(arg_1 == "temp" ? "D=A" : "D=M")
+      append("@#{arg_2}")
+      append("D=D+A")
+      append("@targetLocation")
+      append("M=D") # store relative address in target address
+
+      # put stack value in target location
+      append("@stackValue")
+      append("D=M")
+      append("@targetLocation")
+      append("A=M")
+      append("M=D")
     end
 
     # -1 is TRUE (1111111111111111)
@@ -197,6 +242,10 @@ module VMTranslator
 
     def append_comment(value)
       File.write(asm_file, "// #{value}\n", mode: "a")
+    end
+
+    def translate(arg)
+      "@#{TRANSLATIONS[arg.to_sym]}"
     end
   end
 end

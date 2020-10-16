@@ -209,7 +209,7 @@ A=M
 M=D
 @SP
 M=M+1
-// add
+// add // 256=55
 @SP
 M=M-1
 A=M
@@ -231,7 +231,7 @@ A=M
 M=D
 @SP
 M=M+1
-// sub
+// sub // 256=34
 @SP
 M=M-1
 A=M
