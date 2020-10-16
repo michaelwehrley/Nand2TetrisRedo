@@ -234,7 +234,7 @@ Test: `% CPUEmulator.sh`
 Test: `% CPUEmulator.sh`
 (compare via `% ruby VMTranslator.rb ProgramFlow/BasicLoop/BasicLoop ProgramFlow/BasicLoop/BasicLoop`)
 
-#### Fibonacci (v2):
+#### Fibonacci Series (v2):
 `% cd projects/08`
 `% ruby vm_translator/VMTranslatorV2.rb ProgramFlow/FibonacciSeries/FibonacciSeries.vm`
 Test: `% CPUEmulator.sh`

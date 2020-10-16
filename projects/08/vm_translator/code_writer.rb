@@ -73,7 +73,13 @@ module VMTranslator
       return pop_static if arg_0 == "pop" && arg_1 == "static"
       return pop if arg_0 == "pop"
       return generate_label if arg_0 == "label"
+      return goto if arg_0 == "goto"
       return if_goto if arg_0 == "if-goto"
+    end
+
+    def goto # Chapter 8
+      append("@$#{(arg_1)}")
+      append("0;JMP")
     end
 
     def if_goto # Chapter 8
