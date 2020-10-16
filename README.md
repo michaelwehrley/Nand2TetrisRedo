@@ -214,3 +214,8 @@ Test: `% CPUEmulator.sh`
 Test: `% CPUEmulator.sh`
 (compare via `ruby VMTranslator.rb  MemoryAccess/BasicTest/BasicTest`)
 
+#### Pointer Test (v2):
+`% cd projects/07`
+`% ruby vm_translator/VMTranslatorV2.rb MemoryAccess/PointerTest/PointerTest.vm`
+Test: `% CPUEmulator.sh`
+(compare via `ruby VMTranslator.rb  MemoryAccess/PointerTest/PointerTest`)

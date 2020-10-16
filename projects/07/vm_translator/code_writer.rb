@@ -6,7 +6,7 @@ module VMTranslator
       local: "LCL",
       argument: "ARG",
       this: "THIS",
-      that: "THAT"
+      that: "THAT",
     }.freeze
 
     attr_accessor :asm_file, :command_type, :arg_0, :arg_1, :arg_2, :line_count
@@ -56,8 +56,10 @@ module VMTranslator
     end
 
     def write_push_pop
+      return push_pointer if arg_0 == "push" && arg_1 == "pointer"
       return push_constant if arg_0 == "push" && arg_1 == "constant"
       return push if arg_0 == "push"
+      return pop_pointer if arg_0 == "pop" && arg_1 == "pointer"
       return pop if arg_0 == "pop"
     end
 
@@ -65,6 +67,24 @@ module VMTranslator
     end
 
     private
+
+    def pop_pointer
+      decrement_stack_pointer
+      append("@SP")
+      append("A=M")
+      append("D=M")
+      append(translate(arg_2 == "0" ? "this" : "that"))
+      append("M=D")
+    end
+
+    def push_pointer
+      append(translate(arg_2 == "0" ? "this" : "that"))
+      append("D=M")
+      append("@SP")
+      append("A=M")
+      append("M=D")
+      increment_stack_pointer
+    end
 
     def add
       decrement_stack_pointer
