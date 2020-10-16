@@ -225,3 +225,5 @@ Test: `% CPUEmulator.sh`
 `% ruby vm_translator/VMTranslatorV2.rb MemoryAccess/StaticTest/StaticTest.vm`
 Test: `% CPUEmulator.sh`
 (compare via `ruby VMTranslator.rb  MemoryAccess/StaticTest/StaticTest`)
+
+## Chapter 8:
