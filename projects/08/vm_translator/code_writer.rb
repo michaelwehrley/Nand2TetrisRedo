@@ -72,17 +72,17 @@ module VMTranslator
       return pop_pointer if arg_0 == "pop" && arg_1 == "pointer"
       return pop_static if arg_0 == "pop" && arg_1 == "static"
       return pop if arg_0 == "pop"
-      return generate_label if arg_0 == "label"
-      return goto if arg_0 == "goto"
-      return if_goto if arg_0 == "if-goto"
+      return write_label if arg_0 == "label"
+      return write_goto if arg_0 == "goto"
+      return write_if if arg_0 == "if-goto"
     end
 
-    def goto # Chapter 8
+    def write_goto # Chapter 8
       append("@$#{(arg_1)}")
       append("0;JMP")
     end
 
-    def if_goto # Chapter 8
+    def write_if # Chapter 8
       decrement_stack_pointer
       append("A=M")
       append("D=M")
@@ -90,7 +90,7 @@ module VMTranslator
       append("D;JNE")
     end
 
-    def generate_label # Chapter 8
+    def write_label # Chapter 8
       File.write(asm_file, "($#{arg_1})\n", mode: "a")
     end
 
