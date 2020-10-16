@@ -212,19 +212,19 @@ Test: `% CPUEmulator.sh`
 `% cd projects/07`
 `% ruby vm_translator/VMTranslatorV2.rb MemoryAccess/BasicTest/BasicTest.vm`
 Test: `% CPUEmulator.sh`
-(compare via `ruby VMTranslator.rb  MemoryAccess/BasicTest/BasicTest`)
+(compare via `% ruby VMTranslator.rb  MemoryAccess/BasicTest/BasicTest`)
 
 #### Pointer Test (v2):
 `% cd projects/07`
 `% ruby vm_translator/VMTranslatorV2.rb MemoryAccess/PointerTest/PointerTest.vm`
 Test: `% CPUEmulator.sh`
-(compare via `ruby VMTranslator.rb  MemoryAccess/PointerTest/PointerTest`)
+(compare via `% ruby VMTranslator.rb  MemoryAccess/PointerTest/PointerTest`)
 
 #### Static Test (v2):
 `% cd projects/07`
 `% ruby vm_translator/VMTranslatorV2.rb MemoryAccess/StaticTest/StaticTest.vm`
 Test: `% CPUEmulator.sh`
-(compare via `ruby VMTranslator.rb  MemoryAccess/StaticTest/StaticTest`)
+(compare via `% ruby VMTranslator.rb  MemoryAccess/StaticTest/StaticTest`)
 
 ## Chapter 8:
 
@@ -232,4 +232,10 @@ Test: `% CPUEmulator.sh`
 `% cd projects/08`
 `% ruby vm_translator/VMTranslatorV2.rb ProgramFlow/BasicLoop/BasicLoop.vm`
 Test: `% CPUEmulator.sh`
-(compare via `VMTranslator.rb ProgramFlow/BasicLoop/BasicLoop ProgramFlow/BasicLoop/BasicLoop`)
+(compare via `% ruby VMTranslator.rb ProgramFlow/BasicLoop/BasicLoop ProgramFlow/BasicLoop/BasicLoop`)
+
+#### Fibonacci (v2):
+`% cd projects/08`
+`% ruby vm_translator/VMTranslatorV2.rb ProgramFlow/FibonacciSeries/FibonacciSeries.vm`
+Test: `% CPUEmulator.sh`
+(compare via `% ruby VMTranslator.rb ProgramFlow/FibonacciSeries/FibonacciSeries ProgramFlow/FibonacciSeries/FibonacciSeries`)
