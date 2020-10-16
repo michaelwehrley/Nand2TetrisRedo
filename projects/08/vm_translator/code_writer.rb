@@ -15,10 +15,10 @@ module VMTranslator
                   :arg_1,
                   :arg_2,
                   :line_count,
-                  :relative_assembly_file_name#,
-                  # :function_stack
+                  :relative_assembly_file_name,
+                  :function_stack
 
-    def initialize(asm_file:, line:, line_count:)
+    def initialize(asm_file:, line:, line_count:, function_stack:)
       @asm_file = asm_file
       @relative_assembly_file_name = /(\w+).asm$/.match(asm_file)[1]
       @command_type = line[:command_type]
@@ -26,16 +26,18 @@ module VMTranslator
       @arg_1 = line[:arg_1]
       @arg_2 = line[:arg_2]
       @line_count = line_count
-      # @function_stack = []
+      @function_stack = function_stack
     end
 
     def write
       append_comment("#{arg_0} #{arg_1} #{arg_2}".gsub(/\s*$/, ""))
-      if command_type == "C_ARITHMETIC"
-        write_arithmetic
-      else
-        write_push_pop
-      end
+      return write_arithmetic if command_type == "C_ARITHMETIC"
+      return write_push_pop if command_type == "C_POP" || command_type == "C_PUSH"
+      return write_goto if command_type == "C_GOTO"
+      return write_label if command_type == "C_LABEL"
+      return write_function if command_type == "C_FUNCTION"
+      return write_return if command_type == "C_RETURN"
+      return write_if if command_type == "C_IF-GOTO"
     end
 
     def set_file_name(file_name)
@@ -65,20 +67,33 @@ module VMTranslator
     end
 
     def write_push_pop
-      return push_constant if arg_0 == "push" && arg_1 == "constant"
-      return push_pointer if arg_0 == "push" && arg_1 == "pointer"
-      return push_static if arg_0 == "push" && arg_1 == "static"
-      return push if arg_0 == "push"
-      return pop_pointer if arg_0 == "pop" && arg_1 == "pointer"
-      return pop_static if arg_0 == "pop" && arg_1 == "static"
-      return pop if arg_0 == "pop"
-      return write_label if arg_0 == "label"
-      return write_goto if arg_0 == "goto"
-      return write_if if arg_0 == "if-goto"
+      if command_type == "C_PUSH"
+        case arg_1
+        when "constant"
+          push_constant
+        when "pointer"
+          push_pointer
+        when "static"
+          push_static
+        else
+          push
+        end
+      elsif command_type == "C_POP"
+        case arg_1
+        when "pointer"
+          pop_pointer
+        when "static"
+          pop_static
+        else
+          pop
+        end
+      else
+        raise "UnrecognizedCommand"
+      end
     end
 
     def write_goto # Chapter 8
-      append("@$#{(arg_1)}")
+      append("@$#{arg_1}")
       append("0;JMP")
     end
 
@@ -86,12 +101,107 @@ module VMTranslator
       decrement_stack_pointer
       append("A=M")
       append("D=M")
-      append("@$#{(arg_1)}")
+      append("@$#{arg_1}")
       append("D;JNE")
     end
 
     def write_label # Chapter 8
-      File.write(asm_file, "($#{arg_1})\n", mode: "a")
+      File.write(asm_file, "($#{arg_1})\n", mode: "a") # no '$'
+    end
+
+    def write_function # Chapter 8
+      function_stack << arg_1
+      File.write(asm_file, "(#{arg_1})\n", mode: "a")
+      i = arg_2.to_i
+      while i > 0
+        i -= 1
+        initialize_memory_segment_fn_arguments_to_zero
+      end
+    end
+
+    def write_return # Chapter 8
+      # Save caller's LCL
+      append("@LCL")
+      append("D=M")
+      append_local_var("FRAME")
+      append("M=D")
+
+      # Put the `return-address` in a temporary variable.
+      append("@5")
+      append("D=A")
+      append_local_var("FRAME")
+      append("D=M-D")
+      append_local_var("RET")
+      append("M=D")
+
+      # Reposition the `return` value for the caller -
+      # (This is the return value for the caller)
+      decrement_stack_pointer
+      append("A=M")
+      append("D=M")
+      append("@ARG")
+      append("A=M")
+      append("M=D")
+      # Restore SP of the caller
+      append("@ARG")
+      append("D=M+1")
+      append("@SP")
+      append("M=D")
+      # Restore THAT
+      append("@1")
+      append("D=A")
+      append_local_var("FRAME")
+      append("D=M-D")
+      append("A=D")
+      append("D=M")
+      append("@THAT")
+      append("M=D")
+      # Restore THIS
+      append("@2")
+      append("D=A")
+      append_local_var("FRAME")
+      append("D=M-D")
+      append("A=D")
+      append("D=M")
+      append("@THIS")
+      append("M=D")
+      # Restore ARG
+      append("@3")
+      append("D=A")
+      append_local_var("FRAME")
+      append("D=M-D")
+      append("A=D")
+      append("D=M")
+      append("@ARG")
+      append("M=D")
+      # Restore LCL
+      append("@4")
+      append("D=A")
+      append_local_var("FRAME")
+      append("D=M-D")
+      append("A=D")
+      append("D=M")
+      append("@LCL")
+      append("M=D")
+      # goto @RET - Goto retun-address (in the caller's code)
+      append_local_var("RET")
+      append("A=M")
+      append("0;JMP")
+
+      function_stack.pop()
+    end
+
+    def append_local_var(variable_name)
+      append("@#{function_stack.last}$#{variable_name}")
+    end
+
+    def initialize_memory_segment_fn_arguments_to_zero
+      append("@0")
+      append("D=A")
+      append("@SP")
+      append("A=M")
+      append("M=D")
+      increment_stack_pointer
     end
 
     def close
