@@ -68,28 +68,33 @@ module VMTranslator
     end
 
     def write_push_pop
-      if command_type == "C_PUSH"
-        case arg_1
-        when "constant"
-          push_constant
-        when "pointer"
-          push_pointer
-        when "static"
-          push_static
-        else
-          push
-        end
-      elsif command_type == "C_POP"
-        case arg_1
-        when "pointer"
-          pop_pointer
-        when "static"
-          pop_static
-        else
-          pop
-        end
+      return write_push if command_type == "C_PUSH"
+      return write_pop if command_type == "C_POP"
+
+      raise "UnrecognizedCommand"
+    end
+
+    def write_push
+      case arg_1
+      when "constant"
+        push_constant
+      when "pointer"
+        push_pointer
+      when "static"
+        push_static
       else
-        raise "UnrecognizedCommand"
+        push
+      end
+    end
+
+    def write_pop
+      case arg_1
+      when "pointer"
+        pop_pointer
+      when "static"
+        pop_static
+      else
+        pop
       end
     end
 

@@ -38,6 +38,10 @@ module VMTranslator
       end
     end
 
+    def arg_0
+      @arg_0 ||= options[0]
+    end
+
     def arg_1
       @arg_1 ||= options[1]
     end
@@ -47,10 +51,6 @@ module VMTranslator
     end
 
     # bonus private methods
-
-    def arg_0
-      @arg_0 ||= options[0]
-    end
 
     def arithmetic?
       ARITHMETIC_COMMANDS.include?(arg_0)
