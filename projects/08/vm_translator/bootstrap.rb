@@ -6,6 +6,10 @@ module VMTranslator
   class Bootstrap
     attr_accessor :asm_file, :vm_file, :line_count, :function_stack
 
+    def self.call(source)
+      new(source).call
+    end
+
     def initialize(source)
       @vm_file = File.open("#{source}", "r") # Xxx.vm or directory
       @asm_file = "#{/([\/|\w]+)(\.*\w*)$/.match(source)[1]}.asm"
